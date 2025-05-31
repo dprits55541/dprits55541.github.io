@@ -215,6 +215,11 @@ This project is perfectly suited for quick and easy deployment using GitHub Page
     * You will find a link similar to `https://YOUR_USERNAME.github.io/YOUR_REPOSITORY_NAME/` where your live application is now hosted!
 
 ---
+## 🌐 Deployment (GitHub Pages)
+
+coming soon!
+
+---
 
 ## 📄 Changelog
 
