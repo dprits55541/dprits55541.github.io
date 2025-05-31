@@ -257,3 +257,7 @@ Contributions are always welcome! If you have suggestions for improvements, new 
 This project is open-source and available under the [MIT License](LICENSE).
 
 ---
+btw i had all my info but @vers4rial from discord helped me out so thanks g highly appreciate it
+
+
+now yall cant dox me
