@@ -1,0 +1,3106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Web Cam</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6366f1"/>
+
+    <link rel="icon" href="/favicon.ico" sizes="48x48" type="image/x-icon">
+    <link rel="icon" href="/icons/72.png" sizes="72x72" type="image/png">
+    <link rel="icon" href="/icons/96.png" sizes="96x96" type="image/png">
+    <link rel="icon" href="/icons/128.png" sizes="128x128" type="image/png">
+    <link rel="icon" href="/icons/144.png" sizes="144x144" type="image/png">
+    <link rel="icon" href="/icons/192.png" sizes="192x192" type="image/png">
+    <link rel="icon" href="/icons/384.png" sizes="384x384" type="image/png">
+    <link rel="icon" href="/icons/512.png" sizes="512x512" type="image/png">
+
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"> <link rel="apple-touch-icon" sizes="72x72" href="/icons/72.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="/icons/96.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="/icons/128.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/icons/144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/icons/192.png">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Webcam">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+
+    <style>
+        /* Define CSS Variables for Theming */
+        :root {
+            /* Light Mode Default (Indigo Accent) */
+            --clr-primary-rgb: 99, 102, 241; /* Indigo 500 */
+            --clr-primary-dark-rgb: 79, 70, 229; /* Indigo 600 */
+            --clr-primary-darker-rgb: 67, 56, 202; /* Indigo 700 */
+
+            --clr-secondary-rgb: 239, 68, 68; /* Red 500 */
+            --clr-secondary-dark-rgb: 220, 38, 38; /* Red 600 */
+            --clr-secondary-darker-rgb: 185, 28, 28; /* Red 700 */
+
+            --clr-tertiary-rgb: 34, 197, 94; /* Green 500 */
+            --clr-tertiary-dark-rgb: 22, 163, 74; /* Green 600 */
+            --clr-tertiary-darker-rgb: 21, 128, 61; /* Green 700 */
+
+            --clr-record-rgb: 244, 63, 94; /* Rose 500 */
+            --clr-record-dark-rgb: 225, 29, 72; /* Rose 600 */
+            --clr-record-darker-rgb: 190, 18, 60; /* Rose 700 */
+
+            --clr-pause-rgb: 250, 204, 21; /* Yellow 400 */
+            --clr-pause-dark-rgb: 234, 179, 8; /* Yellow 500 */
+            --clr-pause-darker-rgb: 217, 119, 6; /* Amber 600 */
+
+            --clr-camera-switch-rgb: 139, 92, 246; /* Purple 400 */
+            --clr-camera-switch-dark-rgb: 124, 58, 237; /* Purple 500 */
+            --clr-camera-switch-darker-rgb: 109, 40, 217; /* Purple 600 */
+
+            --clr-bg: 240, 244, 248; /* Light gray background (Slate 50) */
+            --clr-text: 51, 65, 85; /* Slate 700 */
+            --clr-card-bg: 255, 255, 255; /* White */
+            --clr-border: 226, 232, 240; /* Slate 200 */
+            --clr-shadow-light: 0, 0, 0, 0.1;
+            --clr-shadow-dark: 0, 0, 0, 0.2;
+            --clr-message-bg: 254, 252, 191; /* Yellow 100 */
+            --clr-message-text: 133, 77, 14; /* Yellow 800 */
+            --clr-message-border: 253, 224, 71; /* Yellow 300 */
+            --clr-modal-overlay: 0, 0, 0, 0.7;
+            --clr-modal-close: 148, 163, 177; /* Slate 400 */
+            --clr-modal-close-hover-bg: 254, 242, 242; /* Red 50 */
+            --clr-modal-close-hover-text: 239, 68, 68; /* Red 500 */
+            --clr-gallery-item-bg: 248, 250, 252; /* Slate 50 */
+            --clr-gallery-item-border: 226, 232, 240; /* Slate 200 */
+            --clr-gallery-item-hover-border: 99, 102, 241; /* Primary for hover */
+            --clr-delete-icon-bg: 255, 255, 255, 0.8;
+            --clr-delete-icon: 239, 68, 68;
+            --clr-delete-icon-hover-bg: 239, 68, 68;
+            --clr-delete-icon-hover-text: 255, 255, 255;
+            --clr-download-confirm-bg: 16, 185, 129; /* Emerald 500 */
+            --clr-download-confirm-text: 255, 255, 255;
+            --clr-label-text: 100, 116, 139; /* Slate 600 */
+            --clr-no-media-text: 107, 114, 128; /* Gray 500 */
+            --clr-camera-select-border: 203, 213, 225; /* Slate 300 */
+            --clr-camera-select-text: 51, 65, 85; /* Slate 700 */
+            --clr-camera-select-arrow: 100, 116, 139; /* Slate 600 */
+            --clr-previous-media-label: 148, 163, 177; /* Slate 400 */
+            --clr-caption-bg: 0, 0, 0, 0.6;
+            --clr-caption-text: 255, 255, 255;
+            --clr-selection-bg: 224, 242, 254; /* Sky 100 */
+            --clr-selection-border: 99, 102, 241; /* Primary for selection */
+            --clr-countdown-text: 255, 255, 255;
+            --clr-countdown-bg: 0, 0, 0, 0.7;
+            --clr-download-hover-bg: 67, 56, 202; /* Primary Darker for Download */
+            --clr-share-hover-bg: 34, 197, 94; /* Tertiary for Share */
+            --clr-filter-option-bg: 241, 245, 249; /* Slate 100 */
+            --clr-filter-option-border: 203, 213, 225; /* Slate 300 */
+        }
+
+        /* Dark Mode Overrides */
+        body[data-mode="dark"] {
+            --clr-primary-rgb: 129, 140, 248; /* Indigo 400 */
+            --clr-primary-dark-rgb: 99, 102, 241; /* Indigo 500 */
+            --clr-primary-darker-rgb: 79, 70, 229; /* Indigo 600 */
+
+            --clr-secondary-rgb: 248, 113, 113; /* Red 400 */
+            --clr-secondary-dark-rgb: 239, 68, 68; /* Red 500 */
+            --clr-secondary-darker-rgb: 220, 38, 38; /* Red 600 */
+
+            --clr-tertiary-rgb: 74, 222, 128; /* Green 400 */
+            --clr-tertiary-dark-rgb: 34, 197, 94; /* Green 500 */
+            --clr-tertiary-darker-rgb: 22, 163, 74; /* Green 600 */
+
+            --clr-record-rgb: 251, 113, 133; /* Rose 400 */
+            --clr-record-dark-rgb: 244, 63, 94; /* Rose 500 */
+            --clr-record-darker-rgb: 225, 29, 72; /* Rose 600 */
+
+            --clr-pause-rgb: 253, 224, 71; /* Yellow 300 */
+            --clr-pause-dark-rgb: 250, 204, 21; /* Yellow 400 */
+            --clr-pause-darker-rgb: 234, 179, 8; /* Yellow 500 */
+
+            --clr-camera-switch-rgb: 167, 139, 250; /* Purple 300 */
+            --clr-camera-switch-dark-rgb: 139, 92, 246; /* Purple 400 */
+            --clr-camera-switch-darker-rgb: 109, 40, 217; /* Purple 500 */
+
+            --clr-bg: 15, 23, 42; /* Slate 900 */
+            --clr-text: 226, 232, 240; /* Slate 200 */
+            --clr-card-bg: 30, 41, 59; /* Slate 800 */
+            --clr-border: 51, 65, 85; /* Slate 700 */
+            --clr-shadow-light: 0, 0, 0, 0.3;
+            --clr-shadow-dark: 0, 0, 0, 0.5;
+            --clr-message-bg: 45, 212, 191; /* Teal 400 */
+            --clr-message-text: 2, 44, 34; /* Green 950 */
+            --clr-message-border: 20, 184, 166; /* Teal 500 */
+            --clr-modal-overlay: 0, 0, 0, 0.85;
+            --clr-modal-close: 156, 163, 175; /* Gray 400 */
+            --clr-modal-close-hover-bg: 75, 85, 99; /* Gray 700 */
+            --clr-modal-close-hover-text: 239, 68, 68; /* Red 500 */
+            --clr-gallery-item-bg: 30, 41, 59; /* Slate 800 */
+            --clr-gallery-item-border: 71, 85, 105; /* Slate 700 */
+            --clr-gallery-item-hover-border: 129, 140, 248; /* Primary Light for hover */
+            --clr-delete-icon-bg: 30, 41, 59, 0.8;
+            --clr-delete-icon: 248, 113, 113;
+            --clr-delete-icon-hover-bg: 239, 68, 68;
+            --clr-delete-icon-hover-text: 255, 255, 255;
+            --clr-download-confirm-bg: 6, 182, 212; /* Cyan 500 */
+            --clr-download-confirm-text: 255, 255, 255;
+            --clr-label-text: 148, 163, 177; /* Slate 400 */
+            --clr-no-media-text: 156, 163, 175; /* Gray 400 */
+            --clr-camera-select-border: 71, 85, 105; /* Slate 700 */
+            --clr-camera-select-text: 226, 232, 240; /* Slate 200 */
+            --clr-camera-select-arrow: 148, 163, 177; /* Slate 400 */
+            --clr-previous-media-label: 100, 116, 139; /* Slate 600 */
+            --clr-caption-bg: 0, 0, 0, 0.7;
+            --clr-caption-text: 255, 255, 255;
+            --clr-selection-bg: 45, 212, 191, 0.2; /* Teal 400 transparent */
+            --clr-selection-border: 45, 212, 191; /* Teal 400 */
+            --clr-countdown-text: 255, 255, 255;
+            --clr-countdown-bg: 0, 0, 0, 0.7;
+            --clr-download-hover-bg: 79, 70, 229; /* Primary Dark for Download */
+            --clr-share-hover-bg: 22, 163, 74; /* Tertiary Dark for Share */
+            --clr-filter-option-bg: 51, 65, 85; /* Slate 700 */
+            --clr-filter-option-border: 100, 116, 139; /* Slate 600 */
+        }
+
+        /* Accent Theme Overrides */
+        body[data-theme="emerald"] {
+            --clr-primary-rgb: 16, 185, 129; /* Emerald 500 */
+            --clr-primary-dark-rgb: 5, 150, 105; /* Emerald 600 */
+            --clr-primary-darker-rgb: 4, 120, 87; /* Emerald 700 */
+            --clr-gallery-item-hover-border: 16, 185, 129;
+            --clr-selection-border: 16, 185, 129;
+            --clr-download-hover-bg: 5, 150, 105;
+        }
+        body[data-theme="rose"] {
+            --clr-primary-rgb: 244, 63, 94; /* Rose 500 */
+            --clr-primary-dark-rgb: 225, 29, 72; /* Rose 600 */
+            --clr-primary-darker-rgb: 190, 18, 60; /* Rose 700 */
+            --clr-gallery-item-hover-border: 244, 63, 94;
+            --clr-selection-border: 244, 63, 94;
+            --clr-download-hover-bg: 225, 29, 72;
+        }
+
+        /* Base Body Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: rgb(var(--clr-bg));
+            color: rgb(var(--clr-text));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 1rem;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+
+        /* Container Styles */
+        .container {
+            background-color: rgb(var(--clr-card-bg));
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(var(--clr-shadow-light));
+            padding: 2rem;
+            max-width: 90%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        video {
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+            border-radius: 1rem;
+            background-color: #000;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.3s ease-in-out;
+            position: relative; /* For countdown overlay */
+            z-index: 1; /* Ensure video is above background but below overlays */
+        }
+        canvas {
+            display: none;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            width: 100%;
+            max-width: 768px; /* Added max-width to prevent stretching */
+        }
+        button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 8px rgba(var(--clr-shadow-light));
+            flex-grow: 1;
+            min-width: 120px;
+            border: 1px solid transparent;
+            background-size: 200% auto;
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(var(--clr-shadow-dark));
+            background-position: right center;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Specific button styles with gradients */
+        .btn-primary {
+            background-image: linear-gradient(to right, rgb(var(--clr-primary-rgb)) 0%, rgb(var(--clr-primary-dark-rgb)) 50%, rgb(var(--clr-primary-darker-rgb)) 100%);
+            color: #ffffff;
+            border-color: rgb(var(--clr-primary-dark-rgb));
+        }
+        .btn-primary:hover:not(:disabled) {
+            border-color: rgb(var(--clr-primary-darker-rgb));
+        }
+        .btn-secondary {
+            background-image: linear-gradient(to right, rgb(var(--clr-secondary-rgb)) 0%, rgb(var(--clr-secondary-dark-rgb)) 50%, rgb(var(--clr-secondary-darker-rgb)) 100%);
+            color: #ffffff;
+            border-color: rgb(var(--clr-secondary-dark-rgb));
+        }
+        .btn-secondary:hover:not(:disabled) {
+            border-color: rgb(var(--clr-secondary-darker-rgb));
+        }
+        .btn-tertiary {
+            background-image: linear-gradient(to right, rgb(var(--clr-tertiary-rgb)) 0%, rgb(var(--clr-tertiary-dark-rgb)) 50%, rgb(var(--clr-tertiary-darker-rgb)) 100%);
+            color: #ffffff;
+            border-color: rgb(var(--clr-tertiary-dark-rgb));
+        }
+        .btn-tertiary:hover:not(:disabled) {
+            border-color: rgb(var(--clr-tertiary-darker-rgb));
+        }
+        .btn-record {
+            background-image: linear-gradient(to right, rgb(var(--clr-record-rgb)) 0%, rgb(var(--clr-record-dark-rgb)) 50%, rgb(var(--clr-record-darker-rgb)) 100%);
+            color: #ffffff;
+            border-color: rgb(var(--clr-record-dark-rgb));
+        }
+        .btn-record:hover:not(:disabled) {
+            border-color: rgb(var(--clr-record-darker-rgb));
+        }
+        .btn-pause {
+            background-image: linear-gradient(to right, rgb(var(--clr-pause-rgb)) 0%, rgb(var(--clr-pause-dark-rgb)) 50%, rgb(var(--clr-pause-darker-rgb)) 100%);
+            color: rgb(var(--clr-text)); /* Text can be dark on light pause button */
+            border-color: rgb(var(--clr-pause-dark-rgb));
+        }
+        .btn-pause:hover:not(:disabled) {
+            border-color: rgb(var(--clr-pause-darker-rgb));
+        }
+        .btn-camera-switch {
+            background-image: linear-gradient(to right, rgb(var(--clr-camera-switch-rgb)) 0%, rgb(var(--clr-camera-switch-dark-rgb)) 50%, rgb(var(--clr-camera-switch-darker-rgb)) 100%);
+            color: #ffffff;
+            border-color: rgb(var(--clr-camera-switch-dark-rgb));
+        }
+        .btn-camera-switch:hover:not(:disabled) {
+            border-color: rgb(var(--clr-camera-switch-darker-rgb));
+        }
+        .btn-share {
+            background-image: linear-gradient(to right, rgb(var(--clr-tertiary-rgb)) 0%, rgb(var(--clr-tertiary-dark-rgb)) 50%, rgb(var(--clr-tertiary-darker-rgb)) 100%);
+            color: #ffffff;
+            border-color: rgb(var(--clr-tertiary-dark-rgb));
+        }
+        .btn-share:hover:not(:disabled) {
+            border-color: rgb(var(--clr-tertiary-darker-rgb));
+        }
+
+        /* New style for the circular icon button */
+        .btn-icon-circle {
+            width: 48px; /* Fixed width */
+            height: 48px; /* Fixed height */
+            border-radius: 50%; /* Make it circular */
+            padding: 0; /* Remove padding to center icon */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative; /* For sub-icon positioning */
+            flex-shrink: 0; /* Prevent it from shrinking */
+            flex-grow: 0; /* Explicitly prevent growing */
+            min-width: 0; /* Ensure it doesn't get stretched by general button styles */
+        }
+        .btn-icon-circle .fa-cog, .btn-icon-circle .fa-pause, .btn-icon-circle .fa-play {
+            font-size: 1.8rem; /* Larger icon to fill the circle more */
+            color: #ffffff; /* Ensure the icon is white */
+        }
+        /* Specific style for circular pause/resume button */
+        .btn-pause.btn-icon-circle {
+            background-image: linear-gradient(to right, rgb(var(--clr-pause-rgb)) 0%, rgb(var(--clr-pause-dark-rgb)) 50%, rgb(var(--clr-pause-darker-rgb)) 100%);
+            color: #ffffff; /* Ensure icon is white for pause button */
+            border-color: rgb(var(--clr-pause-dark-rgb));
+        }
+        .btn-pause.btn-icon-circle:hover:not(:disabled) {
+            border-color: rgb(var(--clr-pause-darker-rgb));
+        }
+
+
+        .message-box {
+            background-color: rgb(var(--clr-message-bg));
+            color: rgb(var(--clr-message-text));
+            padding: 0.75rem 1.25rem;
+            border: 1px solid rgb(var(--clr-message-border));
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            width: 100%;
+            max-width: 640px;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            pointer-events: none;
+        }
+        .message-box.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Modal/Pop-up styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(var(--clr-modal-overlay));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000; /* Ensure it's on top */
+            opacity: 0;
+            visibility: hidden; /* Hidden by default */
+            pointer-events: none; /* Crucial: allow clicks to pass through when hidden */
+            transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto; /* Crucial: block clicks when shown */
+        }
+        .modal-content {
+            background-color: rgb(var(--clr-card-bg));
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 15px 30px rgba(var(--clr-shadow-dark));
+            max-width: 90%;
+            width: 500px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease-out, background-color 0.3s ease-in-out;
+            position: relative;
+        }
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+        .modal-content img, .modal-content video {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            object-fit: contain; /* Ensure media scales within bounds */
+        }
+        /* Refined Modal Close Button */
+        .modal-close-button {
+            position: absolute;
+            top: 0.75rem; /* Adjusted for better spacing */
+            right: 0.75rem; /* Adjusted for better spacing */
+            background: none;
+            border: none;
+            color: rgb(var(--clr-modal-close));
+            cursor: pointer;
+            width: 36px; /* Smaller, square button */
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem; /* Rounded corners */
+            transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+        }
+        .modal-close-button i { /* Style the Font Awesome icon inside */
+            font-size: 1.5rem; /* Size of the 'x' icon */
+            line-height: 1; /* Ensure vertical centering */
+        }
+        .modal-close-button:hover {
+            color: rgb(var(--clr-modal-close-hover-text));
+            background-color: rgb(var(--clr-modal-close-hover-bg));
+        }
+        .modal-fullscreen-button {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: white;
+            width: 36px; /* Fixed width */
+            height: 36px; /* Fixed height */
+            padding: 0; /* Remove padding to center icon */
+            display: flex; /* Use flexbox to center content */
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .modal-fullscreen-button:hover {
+            background: rgba(0,0,0,0.7);
+        }
+        .modal-fullscreen-button i { /* Style the Font Awesome icon inside */
+            font-size: 1.25rem; /* Adjust icon size */
+            line-height: 1; /* Ensure vertical centering */
+        }
+
+        /* Gallery Page Styles */
+        #pics-section {
+            padding: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        #picsGallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            padding: 1rem;
+            background-color: rgb(var(--clr-card-bg));
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(var(--clr-shadow-light));
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .photo-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background-color: rgb(var(--clr-gallery-item-bg));
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            box-shadow: 0 2px 8px rgba(var(--clr-shadow-light), 0.05);
+            transition: transform 0.2s ease-in-out, background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgb(var(--clr-gallery-item-border)); /* Default border */
+        }
+        .photo-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(var(--clr-shadow-light), 0.1);
+            border-color: rgb(var(--clr-gallery-item-hover-border));
+        }
+        .photo-item.selected {
+            border-color: rgb(var(--clr-selection-border));
+            background-color: rgba(var(--clr-selection-bg));
+            box-shadow: 0 4px 12px rgba(var(--clr-shadow-light), 0.2);
+        }
+        .photo-item img, .photo-item video {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        /* Media Caption Styles */
+        .media-caption {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgb(var(--clr-caption-bg));
+            color: rgb(var(--clr-caption-text));
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-top-left-radius: 0.75rem;
+            border-top-right-radius: 0.75rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-100%);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+        .photo-item:hover .media-caption {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Preview Label styles */
+        #previewLabel {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: rgb(var(--clr-label-text));
+            margin-top: 1rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            pointer-events: none;
+        }
+        #previewLabel.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Download Confirmation Popup */
+        .download-confirmation {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            background-color: rgb(var(--clr-download-confirm-bg));
+            color: rgb(var(--clr-download-confirm-text));
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+            z-index: 1001;
+            visibility: hidden; /* Hidden by default */
+            pointer-events: none; /* No clicks when hidden */
+            font-weight: 500;
+        }
+        .download-confirmation.show {
+            opacity: 1;
+            transform: translateX(0);
+            visibility: visible; /* Visible when shown */
+            pointer-events: auto; /* Captures clicks when shown */
+        }
+
+        /* Camera Selection Dropdown */
+        .camera-select-group, .settings-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            max-width: 640px;
+            margin-top: 1rem;
+        }
+        .camera-select-group select, .settings-group select, .settings-group input[type="number"] {
+            flex-grow: 1;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgb(var(--clr-camera-select-border));
+            background-color: rgb(var(--clr-card-bg));
+            font-size: 1rem;
+            color: rgb(var(--clr-camera-select-text));
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M287%20197.6l-133.5-133.5c-4.4-4.4-11.4-4.4-15.8%200L5.4%20197.6c-4.4%204.4-4.4%2011.4%200%2015.8l15.8%2015.8c4.4%204.4%2011.4%204.4%2015.8%200l101.9-101.9L255.4%20229.2c4.4%204.4%2011.4%204.4%2015.8%200l15.8-15.8c4.4-4.4%204.4-11.4%200-15.8z%22%2F%3E%3C%2Fsvg%3E'); /* Default gray for dropdown arrow */
+            background-repeat: no-repeat;
+            background-position: right 0.7em top 50%, 0 0;
+            background-size: 0.65em auto, 100%;
+        }
+        body[data-mode="dark"] .camera-select-group select, body[data-mode="dark"] .settings-group select, body[data-mode="dark"] .settings-group input[type="number"] {
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%20197.6l-133.5-133.5c-4.4-4.4-11.4-4.4-15.8%200L5.4%20197.6c-4.4%204.4-4.4%2011.4%200%2015.8l15.8%2015.8c4.4%204.4%2011.4%204.4%2015.8%200l101.9-101.9L255.4%20229.2c4.4%204.4%2011.4%204.4%2015.8%200l15.8-15.8c4.4-4.4%204.4-11.4%200-15.8z%22%2F%3E%3C%2Fsvg%3E');
+        }
+
+        .camera-select-group select:focus, .settings-group select:focus, .settings-group input[type="number"]:focus {
+            outline: none;
+            border-color: rgb(var(--clr-primary-rgb));
+            box-shadow: 0 0 0 2px rgba(var(--clr-primary-rgb), 0.5);
+        }
+
+        /* Previous Taken Media Label specific styles */
+        #previousTakenMediaLabel {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: rgb(var(--clr-previous-media-label));
+            text-align: center;
+            margin-top: 0;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out, margin-top 0.3s ease-out;
+            box-sizing: border-box;
+        }
+        #previousTakenMediaLabel.show-label {
+            max-height: 2rem;
+            opacity: 1;
+            margin-top: 0.75rem;
+        }
+
+        /* Trashcan icon style */
+        .delete-icon {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: rgb(var(--clr-delete-icon-bg));
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: rgb(var(--clr-delete-icon));
+            font-size: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+            z-index: 15;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .photo-item:hover .delete-icon, .delete-icon.visible { /* Add visible class for selection mode */
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .delete-icon:hover {
+            background-color: rgb(var(--clr-delete-icon-hover-bg));
+            color: rgb(var(--clr-delete-icon-hover-text));
+        }
+
+        /* Custom Dialog Styles */
+        .custom-dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(var(--clr-modal-overlay));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000; /* Ensure it's on top of modals */
+            opacity: 0;
+            visibility: hidden; /* Hidden by default */
+            pointer-events: none; /* Crucial: allow clicks to pass through when hidden */
+            transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+        }
+        .custom-dialog-overlay.show {
+            opacity: 1;
+            visibility: visible; /* Visible when shown */
+            pointer-events: auto; /* Crucial: block clicks when shown */
+        }
+        .custom-dialog-content {
+            background-color: rgb(var(--clr-card-bg));
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 15px 30px rgba(var(--clr-shadow-dark));
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease-out, background-color 0.3s ease-in-out;
+        }
+        .custom-dialog-overlay.show .modal-content {
+            transform: scale(1);
+        }
+        .custom-dialog-content h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: rgb(var(--clr-text));
+            margin-bottom: 1rem;
+        }
+        .custom-dialog-content p {
+            color: rgb(var(--clr-label-text));
+            margin-bottom: 1.5rem;
+        }
+        .custom-dialog-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .custom-dialog-buttons button {
+            flex-grow: 0;
+            min-width: 100px;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 640px) {
+            .container, #pics-section {
+                padding: 1.5rem;
+            }
+            .button-group {
+                flex-direction: column;
+            }
+            button {
+                width: 100%;
+            }
+            #picsGallery {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            .photo-item img, .photo-item video {
+                height: 100px;
+            }
+            .download-confirmation {
+                top: 0.5rem;
+                right: 0.5rem;
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            .camera-select-group, .settings-group {
+                flex-direction: column;
+            }
+            .camera-select-group select, .settings-group select, .settings-group input[type="number"] {
+                width: 100%;
+            }
+            .custom-dialog-content {
+                padding: 1.5rem;
+                width: 95%;
+            }
+            .custom-dialog-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* Styles for the Changelog Modal */
+        #changelogModal {
+            z-index: 1001; /* Higher z-index to appear above theme settings modal */
+        }
+        #changelogModal .modal-content {
+            max-width: 600px;
+            text-align: left; /* Align text left for readability */
+        }
+
+        .changelog-content {
+            max-height: 70vh; /* Limit height for scrollability */
+            overflow-y: auto; /* Enable scrolling */
+            padding-right: 1rem; /* Space for scrollbar */
+        }
+
+        .changelog-content ul {
+            list-style-type: none; /* Remove default bullet points */
+            padding: 0;
+        }
+
+        .changelog-content li {
+            margin-bottom: 15px;
+            background-color: rgb(var(--clr-gallery-item-bg)); /* Use existing theme variable for background */
+            padding: 10px 15px;
+            border-radius: 0.5rem; /* Rounded corners */
+            box-shadow: 0 2px 4px rgba(var(--clr-shadow-light), 0.05); /* Softer shadow */
+            color: rgb(var(--clr-text)); /* Inherit text color */
+        }
+
+        .changelog-content h3 {
+            color: rgb(var(--clr-primary-rgb)); /* Make version headers stand out with primary color */
+            font-size: 1.25rem; /* Slightly larger heading */
+            font-weight: 600;
+            margin-top: 25px; /* Space above version headers */
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgb(var(--clr-border));
+            padding-bottom: 5px;
+        }
+
+        .changelog-content ul li strong {
+            color: rgb(var(--clr-primary-dark-rgb)); /* Highlight strong text */
+        }
+
+        /* Style for the Show Changelog button */
+        #showChangelogButton {
+            margin-top: 20px; /* Space above the button within the popup */
+            width: 100%; /* Makes the button full width within its container */
+            padding: 0.75rem 1.5rem; /* Comfortable padding */
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 8px rgba(var(--clr-shadow-light));
+            background-image: linear-gradient(to right, rgb(var(--clr-primary-rgb)) 0%, rgb(var(--clr-primary-dark-rgb)) 50%, rgb(var(--clr-primary-darker-rgb)) 100%);
+            color: #ffffff;
+            border-color: rgb(var(--clr-primary-dark-rgb));
+        }
+
+        #showChangelogButton:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(var(--clr-shadow-dark));
+            background-position: right center;
+            border-color: rgb(var(--clr-primary-darker-rgb));
+        }
+
+        /* Countdown Overlay */
+        #countdownOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(var(--clr-countdown-bg));
+            font-size: 8rem;
+            font-weight: bold;
+            color: rgb(var(--clr-countdown-text));
+            z-index: 50;
+            border-radius: 1rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease-out;
+        }
+        #countdownOverlay.show {
+            opacity: 1;
+        }
+        #countdownNumber {
+            transform: scale(1);
+            animation: countdownPop 1s ease-out forwards;
+        }
+        @keyframes countdownPop {
+            0% { transform: scale(1); opacity: 1; }
+            80% { transform: scale(1.5); opacity: 1; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
+        /* Settings Modal Specifics */
+        #settingsModal .modal-content {
+            max-width: 600px;
+            text-align: left;
+            max-height: 90vh; /* Set a max-height for the modal content */
+            overflow-y: auto; /* Enable vertical scrolling */
+            padding-right: 1rem; /* Add padding for scrollbar */
+        }
+        #settingsModal .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        #settingsModal .setting-section {
+            background-color: rgb(var(--clr-gallery-item-bg));
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgb(var(--clr-gallery-item-border));
+            box-shadow: 0 2px 5px rgba(var(--clr-shadow-light), 0.05);
+        }
+        #settingsModal .setting-section h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: rgb(var(--clr-primary-dark-rgb));
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid rgb(var(--clr-border));
+            padding-bottom: 0.5rem;
+        }
+        #settingsModal .setting-option {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        #settingsModal .setting-option label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: rgb(var(--clr-label-text));
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        #settingsModal .setting-option input[type="radio"] {
+            margin-right: 0.25rem;
+            accent-color: rgb(var(--clr-primary-rgb));
+        }
+        #settingsModal .setting-option input[type="number"],
+        #settingsModal .setting-option select {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgb(var(--clr-filter-option-border));
+            background-color: rgb(var(--clr-filter-option-bg));
+            color: rgb(var(--clr-text));
+            appearance: none; /* Remove default dropdown arrow */
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M287%20197.6l-133.5-133.5c-4.4-4.4-11.4-4.4-15.8%200L5.4%20197.6c-4.4%204.4-4.4%2011.4%200%2015.8l15.8%2015.8c4.4%204.4%2011.4%204.4%2015.8%200l101.9-101.9L255.4%20229.2c4.4%204.4%2011.4%204.4%2015.8%200l15.8-15.8c4.4-4.4%204.4-11.4%200-15.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 0.7em top 50%, 0 0;
+            background-size: 0.65em auto, 100%;
+        }
+        body[data-mode="dark"] #settingsModal .setting-option input[type="number"],
+        body[data-mode="dark"] #settingsModal .setting-option select {
+            background-color: rgb(var(--clr-card-bg));
+            border-color: rgb(var(--clr-border));
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%20197.6l-133.5-133.5c-4.4-4.4-11.4-4.4-15.8%200L5.4%20197.6c-4.4%204.4-4.4%2011.4%200%2015.8l15.8%2015.8c4.4%204.4%2011.4%204.4%2015.8%200l101.9-101.9L255.4%20229.2c4.4%204.4%2011.4%204.4%2015.8%200l15.8-15.8c4.4-4.4%204.4-11.4%200-15.8z%22%2F%3E%3C%2Fsvg%3E');
+        }
+        #settingsModal .setting-option input[type="number"]:focus,
+        #settingsModal .setting-option select:focus {
+            outline: none;
+            border-color: rgb(var(--clr-primary-rgb));
+            box-shadow: 0 0 0 2px rgba(var(--clr-primary-rgb), 0.5);
+        }
+
+        /* Gallery Batch Actions */
+        .batch-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .batch-actions button {
+            flex-grow: 1;
+            min-width: 150px;
+        }
+        .gallery-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+        .gallery-header .sort-options {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .gallery-header .sort-options label {
+            color: rgb(var(--clr-label-text));
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .gallery-header .sort-options select {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgb(var(--clr-camera-select-border));
+            background-color: rgb(var(--clr-card-bg));
+            color: rgb(var(--clr-camera-select-text));
+            font-size: 0.9rem;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M287%20197.6l-133.5-133.5c-4.4-4.4-11.4-4.4-15.8%200L5.4%20197.6c-4.4%204.4-4.4%2011.4%200%2015.8l15.8%2015.8c4.4%204.4%2011.4%204.4%2015.8%200l101.9-101.9L255.4%20229.2c4.4%204.4%2011.4%204.4%2015.8%200l15.8-15.8c4.4-4.4%204.4-11.4%200-15.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 0.7em top 50%, 0 0;
+            background-size: 0.65em auto, 100%;
+        }
+        body[data-mode="dark"] .gallery-header .sort-options select {
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%20197.6l-133.5-133.5c-4.4-4.4-11.4-4.4-15.8%200L5.4%20197.6c-4.4%204.4-4.4%2011.4%200%2015.8l15.8%2015.8c4.4%204.4%2011.4%204.4%2015.8%200l101.9-101.9L255.4%20229.2c4.4%204.4%2011.4%204.4%2015.8%200l15.8-15.8c4.4-4.4%204.4-11.4%200-15.8z%22%2F%3E%3C%2Fsvg%3E');
+        }
+        .gallery-header .sort-options select:focus {
+            outline: none;
+            border-color: rgb(var(--clr-primary-rgb));
+            box-shadow: 0 0 0 2px rgba(var(--clr-primary-rgb), 0.5);
+        }
+        .select-checkbox {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            z-index: 20; /* Ensure checkbox is above media content */
+            width: 20px;
+            height: 20px;
+            accent-color: rgb(var(--clr-primary-rgb));
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+        }
+        /* Modified: Removed .photo-item:hover .select-checkbox from this rule */
+        .select-checkbox.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Apology Popup Styles */
+        #apologyPopup {
+            z-index: 2000; /* Higher than other modals */
+            background-color: rgb(var(--clr-modal-overlay));
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+        }
+        #apologyPopup.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        #apologyPopup .modal-content {
+            background-color: rgb(var(--clr-card-bg));
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 15px 30px rgba(var(--clr-shadow-dark));
+            max-width: 90%;
+            width: 500px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease-out, background-color 0.3s ease-in-out;
+            position: relative;
+        }
+        #apologyPopup.show .modal-content {
+            transform: scale(1);
+        }
+        #apologyPopup h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: rgb(var(--clr-primary-darker-rgb));
+            margin-bottom: 1rem;
+        }
+        #apologyPopup p {
+            font-size: 1.1rem;
+            color: rgb(var(--clr-text));
+            margin-bottom: 1.5rem;
+        }
+        #apologyPopup .btn-primary {
+            min-width: 150px;
+        }
+    </style>
+</head>
+<body data-mode="light" data-theme="indigo">
+    <div class="w-full max-w-md flex justify-center gap-4 mb-6">
+        <button id="navWebcamButton" class="btn-primary">Webcam</button>
+        <button id="navPicsButton" class="btn-primary">My Media</button>
+        <button id="navSettingsButton" class="btn-primary btn-icon-circle" title="Settings">
+            <i class="fas fa-cog"></i>
+        </button>
+    </div>
+
+    <div id="webcam-section" class="container">
+        <h1 class="text-3xl font-bold mb-4">Virtual Web Cam</h1>
+
+        <div style="position: relative; width: 100%; max-width: 640px;">
+            <video id="webcamVideo" autoplay playsinline muted class="rounded-lg shadow-md"></video>
+            <div id="countdownOverlay" class="rounded-lg">
+                <span id="countdownNumber"></span>
+            </div>
+        </div>
+
+        <div id="previewLabel">Latest Photo Preview</div>
+
+        <div class="camera-select-group">
+            <select id="cameraSelect" class="hidden"></select>
+            <button id="changeCameraButton" class="btn-camera-switch hidden">Change Camera</button>
+        </div>
+
+        <div id="previousTakenMediaLabel">Previous Taken Media</div>
+
+        <canvas id="webcamCanvas"></canvas>
+
+        <div id="messageBox" class="message-box"></div>
+
+        <div class="button-group">
+            <button id="startButton" class="btn-primary">Start Webcam</button>
+            <button id="stopButton" class="btn-secondary" disabled>Stop Webcam</button>
+            <button id="captureButton" class="btn-tertiary" disabled>Capture Photo</button>
+            <button id="recordButton" class="btn-record" disabled>Record Video</button>
+            <button id="audioRecordButton" class="btn-record" disabled>Record Audio</button>
+            <button id="pauseResumeButton" class="btn-pause btn-icon-circle" disabled>
+                <i class="fas fa-pause"></i>
+            </button>
+            <button id="stopRecordButton" class="btn-secondary" disabled>Stop Recording</button>
+        </div>
+
+        <div id="imageEditingControls" class="w-full max-w-2xl mt-8 pt-4 border-t border-gray-200 hidden">
+            <h2 class="text-2xl font-bold mb-4 text-center">Image Editing Tools</h2>
+            <div class="button-group">
+                <button id="grayscaleButton" class="btn-primary">Grayscale</button>
+                <button id="sepiaButton" class="btn-primary">Sepia</button>
+                <button id="rotateButton" class="btn-primary">Rotate 90°</button>
+                <button id="flipHButton" class="btn-primary">Flip Horizontal</button>
+                <button id="resetButton" class="btn-secondary">Reset Image</button>
+            </div>
+        </div>
+        </div>
+
+    <div id="previewModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-button" id="modalCloseButton"><i class="fas fa-times"></i></button>
+            <button class="modal-fullscreen-button" id="modalFullscreenButton" title="Toggle Fullscreen"><i class="fas fa-expand"></i></button>
+            <h2 class="text-2xl font-semibold mb-4">Captured Media!</h2>
+            <div id="modalMediaPreviewContainer" class="rounded-lg mb-4"></div>
+            <p id="modalMessageText" class="text-gray-600"></p>
+            <div class="button-group">
+                <button id="modalDownloadButton" class="btn-primary">Download</button>
+                <button id="modalShareButton" class="btn-share"><i class="fas fa-share-alt mr-2"></i>Share</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pics-section" class="container hidden">
+        <h1 class="text-3xl font-bold mb-4">My Captured Photos & Videos</h1>
+        <div class="gallery-header">
+            <button id="toggleSelectButton" class="btn-primary">Select Items</button>
+            <div class="sort-options">
+                <label for="sortGallery">Sort by:</label>
+                <select id="sortGallery">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="type">Type (Photo/Video)</option>
+                </select>
+            </div>
+        </div>
+        <div id="picsGallery" class="w-full">
+            <p id="noPhotosMessage" class="text-center text-gray-500 w-full col-span-full">No photos or videos captured yet. Go to the Webcam tab to take some!</p>
+        </div>
+        <div id="batchActions" class="batch-actions hidden">
+            <button id="batchDownloadButton" class="btn-primary" disabled>Download Selected</button>
+            <button id="batchDeleteButton" class="btn-secondary" disabled>Delete Selected</button>
+            <button id="cancelSelectButton" class="btn-tertiary">Cancel Selection</button>
+        </div>
+        <button id="clearAllMediaButton" class="btn-secondary mt-4 hidden">Clear All Media</button>
+    </div>
+
+    <div id="downloadConfirmation" class="download-confirmation">
+        File Downloaded!
+    </div>
+
+    <div id="confirmationDialog" class="custom-dialog-overlay">
+        <div class="custom-dialog-content">
+            <h2 id="confirmDialogTitle">Confirm Deletion</h2>
+            <p id="confirmDialogMessage">Are you sure you want to delete this? It's permanent.</p>
+            <div class="custom-dialog-buttons">
+                <button id="confirmDialogCancelBtn" class="btn-primary">Cancel</button>
+                <button id="confirmDialogConfirmBtn" class="btn-secondary">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-button" id="settingsModalCloseButton"><i class="fas fa-times"></i></button>
+            <h2 class="text-2xl font-semibold mb-4 text-center">Settings</h2>
+            <div class="settings-grid">
+                <div class="setting-section">
+                    <h4>Theme Settings</h4>
+                    <div class="setting-option">
+                        <label class="font-bold">Accent Theme:</label>
+                        <label><input type="radio" name="accentTheme" value="indigo" checked> Indigo (Default)</label>
+                        <label><input type="radio" name="accentTheme" value="emerald"> Emerald (Green)</label>
+                        <label><input type="radio" name="accentTheme" value="rose"> Rose (Pink)</label>
+                    </div>
+                    <div class="setting-option">
+                        <label class="font-bold">Color Mode:</label>
+                        <label><input type="radio" name="colorMode" value="light" checked> Light Mode</label>
+                        <label><input type="radio" name="colorMode" value="dark"> Dark Mode</label>
+                    </div>
+                </div>
+
+                <div class="setting-section">
+                    <h4>Capture Settings</h4>
+                    <div class="setting-option">
+                        <label for="countdownTimer">Countdown (seconds):</label>
+                        <input type="number" id="countdownTimer" min="0" max="10" value="0">
+                    </div>
+                    <div class="setting-option">
+                        <label for="photoQuality">Photo Quality (0.1 - 1.0):</label>
+                        <input type="number" id="photoQuality" min="0.1" max="1.0" step="0.1" value="0.9">
+                    </div>
+                    <div class="setting-option">
+                        <label for="captureResolution">Capture Resolution:</label>
+                        <select id="captureResolution">
+                            <option value="default">Default</option>
+                            <option value="640x480">640x480 (SD)</option>
+                            <option value="1280x720">1280x720 (HD)</option>
+                            <option value="1920x1080">1920x1080 (Full HD)</option>
+                        </select>
+                    </div>
+                    <div class="setting-option">
+                        <label for="imageFilter">Image Filter:</label>
+                        <select id="imageFilter">
+                            <option value="none">None</option>
+                            <option value="grayscale">Grayscale</option>
+                            <option value="sepia">Sepia</option>
+                            <option value="invert">Invert</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button id="showChangelogButton" class="btn-primary mt-6">Show Changelog</button>
+            <div class="flex justify-center mt-4 text-gray-500 text-sm">
+                Credits: Dylan Pritsker © 2025 | Discord: @dprits419
+            </div>
+            </div>
+    </div>
+
+    <div id="changelogModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-button" id="changelogModalCloseButton"><i class="fas fa-times"></i></button>
+            <h2 class="text-2xl font-semibold mb-4 text-center">Changelog</h2>
+            <div class="changelog-content"></div>
+        </div>
+    </div>
+
+    <div id="apologyPopup" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="text-center">Important Update!</h2>
+            <p class="text-center">
+                We sincerely apologize for any issues you may have experienced with the previous version of the app.
+                We've been working hard to fix everything, and we're happy to announce that all known bugs have been resolved!
+                Thank you for your patience.
+            </p>
+            <button id="apologyPopupCloseButton" class="btn-primary">Got It!</button>
+        </div>
+    </div>
+
+    <script>
+        console.log("Script block started!"); // Diagnostic log
+
+        // IndexedDB Constants
+        const DB_NAME = 'WebcamMediaDB';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'mediaStore';
+
+        // Local Storage Key for Apology Popup
+        const APOLOGY_POPUP_SHOWN_KEY = 'apologyPopupShown';
+
+        let db; // Global variable for IndexedDB database instance
+
+        // Get references to DOM elements
+        const webcamSection = document.getElementById('webcam-section');
+        const picsSection = document.getElementById('pics-section');
+        const navWebcamButton = document.getElementById('navWebcamButton');
+        const navPicsButton = document.getElementById('navPicsButton');
+        const navSettingsButton = document.getElementById('navSettingsButton'); // Renamed from navThemeButton
+
+        const webcamVideo = document.getElementById('webcamVideo');
+        const webcamCanvas = document.getElementById('webcamCanvas');
+        const webcamContext = webcamCanvas.getContext('2d', { willReadFrequently: true }); // Enable willReadFrequently for better performance with getImageData/putImageData
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const captureButton = document.getElementById('captureButton');
+        const recordButton = document.getElementById('recordButton');
+        const audioRecordButton = document.getElementById('audioRecordButton'); // New: Audio record button
+        const pauseResumeButton = document.getElementById('pauseResumeButton');
+        const stopRecordButton = document.getElementById('stopRecordButton');
+        const messageBox = document.getElementById('messageBox');
+        const previewLabel = document.getElementById('previewLabel');
+
+        const cameraSelect = document.getElementById('cameraSelect');
+        const changeCameraButton = document.getElementById('changeCameraButton');
+
+        const previousTakenMediaLabel = document.getElementById('previousTakenMediaLabel');
+
+        const previewModal = document.getElementById('previewModal');
+        const modalMediaPreviewContainer = document.getElementById('modalMediaPreviewContainer');
+        const modalCloseButton = document.getElementById('modalCloseButton');
+        const modalFullscreenButton = document.getElementById('modalFullscreenButton'); // New: Fullscreen button
+        const modalMessageText = document.getElementById('modalMessageText');
+        const modalDownloadButton = document.getElementById('modalDownloadButton'); // New: Download button in modal
+        const modalShareButton = document.getElementById('modalShareButton'); // New: Share button in modal
+
+        const picsGallery = document.getElementById('picsGallery');
+        const noPhotosMessage = document.getElementById('noPhotosMessage');
+
+        const downloadConfirmation = document.getElementById('downloadConfirmation');
+
+        // Dialog elements
+        const confirmationDialog = document.getElementById('confirmationDialog');
+        const confirmDialogTitle = document.getElementById('confirmDialogTitle');
+        const confirmDialogMessage = document.getElementById('confirmDialogMessage');
+        const confirmDialogConfirmBtn = document.getElementById('confirmDialogConfirmBtn');
+        const confirmDialogCancelBtn = document.getElementById('confirmDialogCancelBtn');
+
+        const clearAllMediaButton = document.getElementById('clearAllMediaButton');
+
+        // Theme and Dark Mode elements
+        const accentThemeRadios = document.querySelectorAll('input[name="accentTheme"]');
+        const colorModeRadios = document.querySelectorAll('input[name="colorMode"]');
+        const body = document.body;
+
+        // Settings Modal elements (renamed from themeSettingsModal)
+        const settingsModal = document.getElementById('settingsModal');
+        const settingsModalCloseButton = document.getElementById('settingsModalCloseButton');
+
+        // New Settings controls
+        const countdownTimerInput = document.getElementById('countdownTimer');
+        const photoQualityInput = document.getElementById('photoQuality');
+        const captureResolutionSelect = document.getElementById('captureResolution');
+        const imageFilterSelect = document.getElementById('imageFilter');
+
+        // New Gallery controls
+        const toggleSelectButton = document.getElementById('toggleSelectButton');
+        const batchActionsDiv = document.getElementById('batchActions');
+        const batchDownloadButton = document.getElementById('batchDownloadButton');
+        const batchDeleteButton = document.getElementById('batchDeleteButton');
+        const cancelSelectButton = document.getElementById('cancelSelectButton');
+        const sortGallerySelect = document.getElementById('sortGallery');
+
+        // Countdown Overlay elements
+        const countdownOverlay = document.getElementById('countdownOverlay');
+        const countdownNumber = document.getElementById('countdownNumber');
+
+        // Changelog Modal elements
+        const showChangelogButton = document.getElementById('showChangelogButton');
+        const changelogModal = document.getElementById('changelogModal');
+        const changelogModalCloseButton = document.getElementById('changelogModalCloseButton');
+        const changelogContent = document.querySelector('#changelogModal .changelog-content');
+
+        // New Image Editing Elements
+        const imageEditingControlsDiv = document.getElementById('imageEditingControls');
+        const grayscaleButton = document.getElementById('grayscaleButton');
+        const sepiaButton = document.getElementById('sepiaButton');
+        const rotateButton = document.getElementById('rotateButton');
+        const flipHButton = document.getElementById('flipHButton');
+        const resetButton = document.getElementById('resetButton');
+
+        // Apology Popup Elements
+        const apologyPopup = document.getElementById('apologyPopup');
+        const apologyPopupCloseButton = document.getElementById('apologyPopupCloseButton');
+
+
+        let currentStream;
+        let mediaRecorder;
+        let recordedChunks = [];
+        let isRecording = false;
+        let isPaused = false;
+        let recordingMediaType = null; // 'video' or 'audio'
+        let availableCameras = [];
+        let currentCameraDeviceId = null;
+
+        let messageTimeoutId;
+        let previewModalTimeoutId;
+        let previewLabelTimeoutId;
+        let downloadConfirmTimeoutId;
+        let countdownInterval;
+
+        let currentConfirmAction = null; // To store the callback for confirmation dialog
+        let currentModalMediaItem = null; // To store the media item currently in the modal
+
+        const capturedMedia = []; // In-memory array for current session's media
+        let selectedMedia = new Set(); // For batch operations
+        let isSelectionMode = false;
+
+        // User settings (from localStorage)
+        let appSettings = {
+            accentTheme: 'indigo',
+            colorMode: 'light',
+            countdownTime: 0,
+            photoQuality: 0.9,
+            captureResolution: 'default',
+            imageFilter: 'none' // This filter is applied on initial capture
+        };
+
+        // Store the original captured image as an ImageBitmap for editing and reset
+        let originalCapturedImageBitmap = null;
+
+        // Tone.js setup for button click sound
+        let clickSynth;
+
+        /**
+         * Initializes Tone.js components for sound effects.
+         */
+        async function initializeAudio() {
+            // Create a simple synth for button clicks
+            clickSynth = new Tone.Synth({
+                oscillator: {
+                    type: "sine"
+                },
+                envelope: {
+                    attack: 0.001,
+                    decay: 0.1,
+                    sustain: 0.01,
+                    release: 0.1
+                }
+            }).toDestination(); // Connect to default output
+
+            // Add a master click listener to play sound on any button click
+            document.addEventListener('click', async (event) => {
+                if (event.target.tagName === 'BUTTON' || event.target.closest('button')) {
+                    // Start Tone.js context on first user interaction
+                    if (Tone.context.state !== 'running') {
+                        await Tone.start();
+                        console.log('AudioContext started!');
+                    }
+                    // Play a short high-pitched note for a click sound
+                    clickSynth.triggerAttackRelease("C6", "16n"); // C6 for 16th note
+                }
+            });
+        }
+
+
+        /**
+         * Applies the selected accent theme to the body.
+         * @param {string} themeName - 'indigo', 'emerald', or 'rose'.
+         */
+        function applyTheme(themeName) {
+            body.dataset.theme = themeName;
+            appSettings.accentTheme = themeName;
+            saveSettings();
+        }
+
+        /**
+         * Toggles dark mode on/off.
+         * @param {boolean} isDark - True for dark mode, false for light mode.
+         */
+        function toggleDarkMode(isDark) {
+            if (isDark) {
+                body.dataset.mode = 'dark';
+            } else {
+                body.dataset.mode = 'light';
+            }
+            appSettings.colorMode = isDark ? 'dark' : 'light';
+            saveSettings();
+        }
+
+        /**
+         * Saves current app settings to localStorage.
+         */
+        function saveSettings() {
+            localStorage.setItem('webcamAppSettings', JSON.stringify(appSettings));
+        }
+
+        /**
+         * Loads app settings from localStorage and applies them.
+         */
+        function loadSettings() {
+            const savedSettings = JSON.parse(localStorage.getItem('webcamAppSettings'));
+            if (savedSettings) {
+                Object.assign(appSettings, savedSettings);
+            }
+
+            applyTheme(appSettings.accentTheme);
+            toggleDarkMode(appSettings.colorMode === 'dark');
+
+            // Set radio buttons
+            accentThemeRadios.forEach(radio => {
+                if (radio.value === appSettings.accentTheme) {
+                    radio.checked = true;
+                }
+            });
+            colorModeRadios.forEach(radio => {
+                if (radio.value === appSettings.colorMode) {
+                    radio.checked = true;
+                }
+            });
+
+            // Set other settings inputs
+            countdownTimerInput.value = appSettings.countdownTime;
+            photoQualityInput.value = appSettings.photoQuality;
+            captureResolutionSelect.value = appSettings.captureResolution;
+            imageFilterSelect.value = appSettings.imageFilter;
+        }
+
+
+        /**
+         * Displays a message to the user in the message box with a smooth animation.
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of message (e.g., 'success', 'error', 'info').
+         */
+        function showMessage(message, type = 'info') {
+            clearTimeout(messageTimeoutId);
+            messageBox.textContent = message;
+            messageBox.className = 'message-box'; // Reset classes
+
+            if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'text-red-800', 'border-red-400');
+            } else if (type === 'success') {
+                messageBox.classList.add('bg-green-100', 'text-green-800', 'border-green-400');
+            } else { // info
+                messageBox.classList.add('bg-blue-100', 'text-blue-800', 'border-blue-400');
+            }
+            messageBox.classList.add('show');
+
+            messageTimeoutId = setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 5000);
+        }
+
+        /**
+         * Shows a custom confirmation dialog.
+         * @param {string} title - The title of the dialog.
+         * @param {string} message - The message to display.
+         * @param {function} onConfirmCallback - Function to call if confirmed.
+         * @param {function} [onCancelCallback] - Function to call if cancelled.
+         */
+        function showConfirmationDialog(title, message, onConfirmCallback, onCancelCallback = null) {
+            confirmDialogTitle.textContent = title;
+            confirmDialogMessage.textContent = message;
+            confirmationDialog.classList.add('show');
+
+            currentConfirmAction = { onConfirm: onConfirmCallback, onCancel: onCancelCallback };
+        }
+
+        /**
+         * Hides the custom confirmation dialog.
+         */
+        function hideConfirmationDialog() {
+            confirmationDialog.classList.remove('show');
+            currentConfirmAction = null;
+        }
+
+        /**
+         * Opens the IndexedDB database.
+         * @returns {Promise<IDBDatabase>} A promise that resolves with the database instance.
+         */
+        function openDatabase() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                    }
+                };
+
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    resolve(db);
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error opening IndexedDB:', event.target.error);
+                    showMessage(`Error opening database: ${event.target.error.message}`, 'error');
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        /**
+         * Saves the current capturedMedia array to IndexedDB.
+         */
+        async function saveMediaToIndexedDB() {
+            if (!db) {
+                showMessage('Database not open. Cannot save media.', 'error');
+                return;
+            }
+
+            try {
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+
+                // Clear existing data to prevent duplicates on re-save
+                const clearRequest = store.clear();
+                clearRequest.onsuccess = () => {
+                    capturedMedia.forEach(mediaItem => {
+                        const itemToStore = { ...mediaItem };
+                        // Ensure Base64 data is stored for videos, not temporary Blob URLs
+                        if (itemToStore.type === 'video' && itemToStore.dataURL.startsWith('blob:')) {
+                            itemToStore.dataURL = itemToStore.base64Data;
+                            delete itemToStore.base64Data; // Clean up temp property
+                        }
+                        store.put(itemToStore);
+                    });
+                };
+
+                await new Promise((resolve, reject) => {
+                    transaction.oncomplete = () => {
+                        console.log('Media saved to IndexedDB.');
+                        resolve();
+                    };
+                    transaction.onerror = (event) => {
+                        console.error('Error saving media to IndexedDB:', event.target.error);
+                        showMessage(`Error saving media: ${event.target.error.message}`, 'error');
+                        reject(event.target.error);
+                    };
+                    clearRequest.onerror = (event) => {
+                        console.error('Error clearing object store during save:', event.target.error);
+                        showMessage(`Error clearing media during save: ${event.target.error.message}`, 'error');
+                        reject(event.target.error);
+                    };
+                });
+            } catch (e) {
+                console.error('Unhandled error in saveMediaToIndexedDB:', e);
+                showMessage(`Failed to save media: ${e.message}`, 'error');
+            }
+        }
+
+
+        /**
+         * Loads capturedMedia array from IndexedDB.
+         * @returns {Promise<Array>} A promise that resolves with the loaded media array.
+         */
+        async function loadMediaFromIndexedDB() {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    console.error('Database not open. Cannot load media.');
+                    resolve([]);
+                    return;
+                }
+
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.getAll();
+
+                request.onsuccess = (event) => {
+                    const loadedItems = event.target.result;
+                    console.log('Loaded from IndexedDB, loadedItems:', loadedItems);
+
+                    const processedMedia = loadedItems.map(item => {
+                        // Recreate Blob URLs for video types stored as Base64
+                        if ((item.type === 'video' || item.type === 'audio') && item.dataURL && item.dataURL.startsWith('data:')) {
+                            const parts = item.dataURL.split(',');
+                            const mimeType = item.mimeType || (parts[0].match(/:(.*?);/) ? parts[0].match(/:(.*?);/)[1] : (item.type === 'video' ? 'video/webm' : 'audio/webm'));
+                            const base64 = parts[1];
+                            const binary = atob(base64);
+                            const array = new Uint8Array(binary.length);
+                            for (let i = 0; i < binary.length; i++) {
+                                array[i] = binary.charCodeAt(i);
+                            }
+                            const blob = new Blob([array], { type: mimeType });
+                            return { ...item, dataURL: URL.createObjectURL(blob), base64Data: item.dataURL }; // Store original Base64 in base64Data
+                        }
+                        return item;
+                    });
+                    resolve(processedMedia);
+                };
+
+                request.onerror = (event) => {
+                    console.error('Error loading media from IndexedDB:', event.target.error);
+                    showMessage(`Error loading media: ${event.target.error.message}`, 'error');
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        /**
+         * Revokes a Blob URL to free up memory.
+         * @param {string} url - The Blob URL to revoke.
+         */
+        function revokeObjectURL(url) {
+            if (url && url.startsWith('blob:')) {
+                URL.revokeObjectURL(url);
+                console.log('Revoked Blob URL:', url);
+            }
+        }
+
+        /**
+         * Updates the visibility of the "Previous Taken Media" label.
+         */
+        function updatePreviousMediaLabelVisibility() {
+            if (capturedMedia.length > 0) {
+                previousTakenMediaLabel.classList.add('show-label');
+            } else {
+                previousTakenMediaLabel.classList.remove('show-label');
+            }
+        }
+
+        /**
+         * Shows the photo/video preview modal.
+         * @param {object} mediaItem - An object containing type ('image' or 'video') and dataURL.
+         * @param {boolean} [autoHide=true] - Whether the modal should automatically hide after a few seconds.
+         * @param {string} [modalMsg=''] - Message to display inside the modal.
+         */
+        function showPreviewModal(mediaItem, autoHide = true, modalMsg = '') {
+            clearTimeout(previewModalTimeoutId);
+            currentModalMediaItem = mediaItem; // Store the current media item
+
+            modalMediaPreviewContainer.innerHTML = '';
+            let mediaElement;
+
+            if (mediaItem.type === 'image') {
+                mediaElement = document.createElement('img');
+                mediaElement.src = mediaItem.dataURL;
+                mediaElement.alt = 'Captured Photo Preview';
+            } else if (mediaItem.type === 'video' || mediaItem.type === 'audio') {
+                mediaElement = document.createElement('video');
+                mediaElement.src = mediaItem.dataURL;
+                mediaElement.controls = true;
+                mediaElement.autoplay = true;
+                mediaElement.loop = true;
+                mediaElement.muted = (mediaItem.type === 'video' && mediaItem.mimeType.includes('video/webm')) ? true : false; // Mute webm videos if no audio expected
+
+                if (mediaItem.type === 'audio') {
+                    mediaElement.style.width = '100%';
+                    mediaElement.style.height = '50px';
+                    mediaElement.style.background = 'black';
+                    mediaElement.style.display = 'block';
+                    mediaElement.style.marginBottom = '1rem';
+                    mediaElement.autoplay = true; // Autoplay audio as well
+                    mediaElement.loop = false;
+                }
+            }
+            mediaElement.className = 'rounded-lg mb-4' + (mediaItem.type === 'audio' ? ' w-full' : ''); // Specific class for audio elements
+
+            modalMediaPreviewContainer.appendChild(mediaElement);
+            modalMessageText.textContent = modalMsg;
+
+            // Show/hide fullscreen button based on media type
+            if (mediaItem.type === 'image' || mediaItem.type === 'video') {
+                modalFullscreenButton.classList.remove('hidden');
+            } else {
+                modalFullscreenButton.classList.add('hidden');
+            }
+
+            // Show/hide share button based on Web Share API availability
+            if (navigator.share && mediaItem.dataURL && mediaItem.dataURL.startsWith('data:')) {
+                modalShareButton.classList.remove('hidden');
+            } else {
+                modalShareButton.classList.add('hidden');
+            }
+
+
+            previewModal.style.visibility = 'visible';
+            previewModal.classList.add('show');
+
+            if (autoHide) {
+                previewModalTimeoutId = setTimeout(() => {
+                    hidePreviewModal();
+                }, 5000);
+            }
+        }
+
+        /**
+         * Hides the preview modal.
+         */
+        function hidePreviewModal() {
+            clearTimeout(previewModalTimeoutId);
+            previewModal.classList.remove('show');
+            setTimeout(() => {
+                previewModal.style.visibility = 'hidden';
+                // Revoke Blob URL if it was a video/audio preview
+                const currentMediaElement = modalMediaPreviewContainer.querySelector('video') || modalMediaPreviewContainer.querySelector('img');
+                if (currentMediaElement && currentMediaElement.src.startsWith('blob:')) {
+                    URL.revokeObjectURL(currentMediaElement.src);
+                }
+                modalMediaPreviewContainer.innerHTML = '';
+                modalMessageText.textContent = '';
+                currentModalMediaItem = null; // Clear the stored media item
+            }, 300);
+        }
+
+        /**
+         * Toggles fullscreen for the media element in the modal.
+         */
+        function toggleModalFullscreen() {
+            const mediaElement = modalMediaPreviewContainer.querySelector('img') || modalMediaPreviewContainer.querySelector('video');
+            if (mediaElement) {
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                } else {
+                    mediaElement.requestFullscreen().catch(err => {
+                        showMessage(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`, 'error');
+                    });
+                }
+            }
+        }
+
+        /**
+         * Downloads the current media item shown in the modal.
+         */
+        function downloadModalMedia() {
+            if (currentModalMediaItem) {
+                const downloadLink = document.createElement('a');
+                // Use base64Data for video/audio download if available, otherwise dataURL (for image)
+                downloadLink.href = (currentModalMediaItem.type === 'video' || currentModalMediaItem.type === 'audio')
+                                    ? currentModalMediaItem.base64Data
+                                    : currentModalMediaItem.dataURL;
+                const timestamp = new Date().toISOString().replace(/[:.-]/g, '');
+                let filename = `webcam_media_${timestamp}`;
+                if (currentModalMediaItem.type === 'image') {
+                    filename += '.png';
+                } else if (currentModalMediaItem.type === 'video') {
+                    filename += '.mp4';
+                } else if (currentModalMediaItem.type === 'audio') {
+                    filename += '.webm'; // Assuming webm for audio, can be more robust
+                }
+                downloadLink.download = filename;
+                document.body.appendChild(downloadLink);
+                // Remove the link with a slight delay to ensure download initiates
+                setTimeout(() => {
+                    document.body.removeChild(downloadLink);
+                }, 100);
+                downloadLink.click();
+                showDownloadConfirmation();
+            }
+        }
+
+        /**
+         * Shares the current media item using the Web Share API.
+         */
+        async function shareModalMedia() {
+            if (!currentModalMediaItem || !navigator.share) {
+                showMessage('Sharing is not supported or no media to share.', 'error');
+                return;
+            }
+
+            try {
+                // For sharing, we need a Blob. If it's a Base64 string, convert it.
+                let blob;
+                if (currentModalMediaItem.dataURL.startsWith('data:')) {
+                    const parts = currentModalMediaItem.dataURL.split(',');
+                    const mimeType = currentModalMediaItem.mimeType || (parts[0].match(/:(.*?);/) ? parts[0].match(/:(.*?);/)[1] : (currentModalMediaItem.type === 'video' ? 'video/mp4' : 'image/png'));
+                    const base64 = parts[1];
+                    const binary = atob(base64);
+                    const array = new Uint8Array(binary.length);
+                    for (let i = 0; i < binary.length; i++) {
+                        array[i] = binary.charCodeAt(i);
+                    }
+                    blob = new Blob([array], { type: mimeType });
+                } else if (currentModalMediaItem.dataURL.startsWith('blob:')) {
+                    // If it's already a blob URL, we need to fetch the blob content
+                    const response = await fetch(currentModalMediaItem.dataURL);
+                    blob = await response.blob();
+                } else {
+                    showMessage('Unsupported media format for sharing.', 'error');
+                    return;
+                }
+
+                const filesArray = [new File([blob], `webcam_media_${Date.now()}.${currentModalMediaItem.type === 'image' ? 'png' : (currentModalMediaItem.type === 'video' ? 'mp4' : 'webm')}`, { type: blob.type })];
+
+                if (navigator.canShare && navigator.canShare({ files: filesArray })) {
+                    await navigator.share({
+                        files: filesArray,
+                        title: 'Webcam Media',
+                        text: `Check out this ${currentModalMediaItem.type} from my Webcam Experiment App!`,
+                    });
+                    showMessage('Media shared successfully!', 'success');
+                } else {
+                    showMessage('Your device does not support sharing this file type.', 'error');
+                }
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    showMessage('Sharing cancelled.', 'info');
+                } else {
+                    console.error('Error sharing media:', error);
+                    showMessage(`Failed to share media: ${error.message}`, 'error');
+                }
+            }
+        }
+
+
+        /**
+         * Displays a temporary download confirmation popup.
+         */
+        function showDownloadConfirmation() {
+            clearTimeout(downloadConfirmTimeoutId);
+
+            downloadConfirmation.classList.add('show');
+            downloadConfirmation.style.pointerEvents = 'auto';
+
+            downloadConfirmTimeoutId = setTimeout(() => {
+                downloadConfirmation.classList.remove('show');
+                setTimeout(() => {
+                    downloadConfirmation.style.pointerEvents = 'none';
+                }, 400);
+            }, 3000);
+        }
+
+        /**
+         * Deletes specific media items from the capturedMedia array and IndexedDB.
+         * @param {Array<string | number>} idsToDelete - An array of IDs of the media items to delete.
+         */
+        async function deleteMedia(idsToDelete) {
+            if (idsToDelete.length === 0) return;
+
+            showConfirmationDialog(
+                `Delete ${idsToDelete.length} Item(s)`,
+                `Are you sure you want to delete ${idsToDelete.length} selected item(s)? This action is permanent.`,
+                async () => {
+                    if (!db) {
+                        showMessage('Database not open. Cannot delete media.', 'error');
+                        hideConfirmationDialog();
+                        return;
+                    }
+                    try {
+                        const transaction = db.transaction([STORE_NAME], 'readwrite');
+                        const store = transaction.objectStore(STORE_NAME);
+                        let deletedCount = 0;
+
+                        const deletePromises = idsToDelete.map(id => {
+                            return new Promise((resolve, reject) => {
+                                const deleteRequest = store.delete(id);
+                                deleteRequest.onsuccess = () => {
+                                    // Remove from capturedMedia array and revoke Blob URL
+                                    const index = capturedMedia.findIndex(item => item.id === id);
+                                    if (index !== -1) {
+                                        if (capturedMedia[index].dataURL.startsWith('blob:')) {
+                                            URL.revokeObjectURL(capturedMedia[index].dataURL);
+                                        }
+                                        capturedMedia.splice(index, 1);
+                                        deletedCount++;
+                                    }
+                                    resolve();
+                                };
+                                deleteRequest.onerror = (event) => {
+                                    console.error(`Error deleting media ${id}:`, event.target.error);
+                                    reject(event.target.error);
+                                };
+                            });
+                        });
+
+                        await Promise.all(deletePromises);
+
+                        await new Promise((resolve, reject) => {
+                            transaction.oncomplete = () => {
+                                showMessage(`${deletedCount} item(s) deleted successfully!`, 'success');
+                                selectedMedia.clear(); // Clear selection after deletion
+                                toggleSelectionMode(false); // Exit selection mode
+                                renderPicsPage(); // Re-render gallery
+                                resolve();
+                            };
+                            transaction.onerror = (event) => {
+                                console.error('Transaction error during batch delete:', event.target.error);
+                                showMessage(`Error during batch delete: ${event.target.error.message}`, 'error');
+                                reject(event.target.error);
+                            };
+                        });
+                    } catch (e) {
+                        console.error('Unhandled error during media deletion:', e);
+                        showMessage(`Failed to delete media: ${e.message}`, 'error');
+                    } finally {
+                        hideConfirmationDialog();
+                    }
+                },
+                () => {
+                    showMessage('Deletion cancelled.', 'info');
+                    hideConfirmationDialog();
+                }
+            );
+        }
+
+        /**
+         * Clears all media from the capturedMedia array and IndexedDB.
+         */
+        function clearAllMedia() {
+            showConfirmationDialog(
+                'Clear All Media',
+                'Are you sure you want to delete ALL your media? This action is permanent and cannot be undone.',
+                async () => {
+                    if (!db) {
+                        showMessage('Database not open. Cannot clear all media.', 'error');
+                        hideConfirmationDialog();
+                        return;
+                    }
+                    try {
+                        const transaction = db.transaction([STORE_NAME], 'readwrite');
+                        const store = transaction.objectStore(STORE_NAME);
+                        const clearRequest = store.clear();
+
+                        await new Promise((resolve, reject) => {
+                            clearRequest.onsuccess = () => {
+                                // Revoke all Blob URLs before clearing the array
+                                capturedMedia.forEach(item => URL.revokeObjectURL(item.dataURL));
+                                capturedMedia.length = 0;
+                                selectedMedia.clear();
+                                toggleSelectionMode(false);
+                                renderPicsPage();
+                                showMessage('All media cleared!', 'success');
+                                resolve();
+                            };
+                            clearRequest.onerror = (event) => {
+                                console.error('Error clearing all media from IndexedDB:', event.target.error);
+                                showMessage(`Error clearing all media: ${event.target.error.message}`, 'error');
+                                reject(event.target.error);
+                            };
+                        });
+                    } catch (e) {
+                        console.error('Unhandled error during clear all media:', e);
+                        showMessage(`Failed to clear all media: ${e.message}`, 'error');
+                    } finally {
+                        hideConfirmationDialog();
+                    }
+                }
+            );
+        }
+
+        /**
+         * Toggles selection mode for batch operations.
+         * @param {boolean} enable - True to enable, false to disable.
+         */
+        function toggleSelectionMode(enable) {
+            isSelectionMode = enable;
+            selectedMedia.clear();
+            renderPicsPage(); // Re-render to show/hide checkboxes and update styles
+
+            if (isSelectionMode) {
+                toggleSelectButton.classList.add('hidden');
+                batchActionsDiv.classList.remove('hidden');
+                clearAllMediaButton.classList.add('hidden'); // Hide individual clear all
+            } else {
+                toggleSelectButton.classList.remove('hidden');
+                batchActionsDiv.classList.add('hidden');
+                updateClearAllMediaButtonVisibility(); // Show/hide based on media count
+            }
+            updateBatchActionButtons();
+        }
+
+        /**
+         * Updates the state of batch download/delete buttons based on selected items.
+         */
+        function updateBatchActionButtons() {
+            const hasSelection = selectedMedia.size > 0;
+            batchDownloadButton.disabled = !hasSelection;
+            batchDeleteButton.disabled = !hasSelection;
+        }
+
+        /**
+         * Updates the visibility of the "Clear All Media" button.
+         */
+        function updateClearAllMediaButtonVisibility() {
+            if (capturedMedia.length > 0 && !isSelectionMode) {
+                clearAllMediaButton.classList.remove('hidden');
+            } else {
+                clearAllMediaButton.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Renders all captured photos and videos in the "My Photos & Videos" gallery.
+         */
+        function renderPicsPage() {
+            picsGallery.innerHTML = '';
+            updatePreviousMediaLabelVisibility(); // Keep previous media label updated on webcam tab
+
+            if (capturedMedia.length === 0) {
+                noPhotosMessage.classList.remove('hidden');
+                // Ensure noPhotosMessage is always added to picsGallery when no media
+                if (!picsGallery.contains(noPhotosMessage)) {
+                    picsGallery.appendChild(noPhotosMessage);
+                }
+                updateClearAllMediaButtonVisibility(); // Hide clear all if no media
+                return;
+            } else {
+                noPhotosMessage.classList.add('hidden');
+                updateClearAllMediaButtonVisibility(); // Show clear all if media present
+            }
+
+            // Apply sorting
+            const sortBy = sortGallerySelect.value;
+            const sortedMedia = [...capturedMedia].sort((a, b) => {
+                if (sortBy === 'newest') {
+                    return b.id - a.id;
+                } else if (sortBy === 'oldest') {
+                    return a.id - b.id;
+                } else if (sortBy === 'type') {
+                    const typeA = a.type === 'image' ? 0 : (a.type === 'video' ? 1 : 2);
+                    const typeB = b.type === 'image' ? 0 : (b.type === 'video' ? 1 : 2);
+                    if (typeA === typeB) {
+                        return b.id - a.id; // Secondary sort by newest if types are same
+                    }
+                    return typeA - typeB;
+                }
+                return 0;
+            });
+
+
+            sortedMedia.forEach((mediaItem) => {
+                const mediaContainer = document.createElement('div');
+                mediaContainer.className = 'photo-item';
+                if (selectedMedia.has(mediaItem.id)) {
+                    mediaContainer.classList.add('selected');
+                }
+
+                // Selection checkbox
+                const selectCheckbox = document.createElement('input');
+                selectCheckbox.type = 'checkbox';
+                selectCheckbox.className = 'select-checkbox';
+                selectCheckbox.checked = selectedMedia.has(mediaItem.id);
+                if (isSelectionMode) {
+                    selectCheckbox.classList.add('visible');
+                }
+                selectCheckbox.addEventListener('change', (event) => {
+                    if (event.target.checked) {
+                        selectedMedia.add(mediaItem.id);
+                        mediaContainer.classList.add('selected');
+                    } else {
+                        selectedMedia.delete(mediaItem.id);
+                        mediaContainer.classList.remove('selected');
+                    }
+                    updateBatchActionButtons();
+                });
+                mediaContainer.appendChild(selectCheckbox);
+
+                // Delete icon
+                const deleteIcon = document.createElement('i');
+                deleteIcon.className = 'fas fa-trash-alt delete-icon';
+                deleteIcon.title = 'Delete Media';
+                if (isSelectionMode) { // Hide individual delete in selection mode
+                    deleteIcon.classList.add('hidden');
+                } else {
+                    deleteIcon.classList.remove('hidden');
+                }
+                deleteIcon.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent modal from opening if it's not selection mode
+                    deleteMedia([mediaItem.id]);
+                });
+                mediaContainer.appendChild(deleteIcon);
+
+                const caption = document.createElement('div');
+                caption.className = 'media-caption';
+                if (mediaItem.type === 'image') {
+                    caption.textContent = 'Photo (PNG)';
+                } else if (mediaItem.type === 'video') {
+                    caption.textContent = 'Video (MP4)';
+                } else if (mediaItem.type === 'audio') {
+                    caption.textContent = 'Audio (WebM)';
+                }
+                mediaContainer.appendChild(caption);
+
+                let mediaPreviewElement;
+                if (mediaItem.type === 'image') {
+                    mediaPreviewElement = document.createElement('img');
+                    mediaPreviewElement.src = mediaItem.dataURL;
+                    mediaPreviewElement.alt = `Captured Photo`;
+                } else if (mediaItem.type === 'video' || mediaItem.type === 'audio') {
+                    mediaPreviewElement = document.createElement('video');
+                    mediaPreviewElement.src = mediaItem.dataURL;
+                    mediaPreviewElement.preload = 'metadata';
+                    mediaPreviewElement.controls = false;
+                    if (mediaItem.type === 'audio') {
+                        mediaPreviewElement.style.objectFit = 'contain';
+                        mediaPreviewElement.style.height = '60px'; // Shorter height for audio previews
+                        mediaPreviewElement.style.backgroundColor = 'black'; // Indicate audio
+                        mediaPreviewElement.classList.add('audio-placeholder'); // Optional: for custom styling
+                    }
+                }
+                mediaPreviewElement.className += ' w-full h-32 object-cover rounded-md cursor-pointer mb-2';
+
+                mediaPreviewElement.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (isSelectionMode) {
+                        selectCheckbox.checked = !selectCheckbox.checked;
+                        selectCheckbox.dispatchEvent(new Event('change')); // Manually trigger change
+                    } else {
+                        showPreviewModal(mediaItem, false, 'Close to return.');
+                    }
+                });
+
+                mediaContainer.appendChild(mediaPreviewElement);
+
+                const downloadButton = document.createElement('button');
+                downloadButton.className = 'btn-primary text-sm'; // Use btn-primary for download button
+                downloadButton.textContent = 'Download';
+                downloadButton.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Prevent modal from opening if it's not selection mode
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = (mediaItem.type === 'video' || mediaItem.type === 'audio')
+                                        ? mediaItem.base64Data
+                                        : mediaItem.dataURL;
+                    const timestamp = new Date(mediaItem.id).toISOString().replace(/[:.-]/g, '');
+                    let filename = `webcam_media_${timestamp}`;
+                    if (mediaItem.type === 'image') {
+                        filename += '.png';
+                    } else if (mediaItem.type === 'video') {
+                        filename += '.mp4';
+                    } else if (mediaItem.type === 'audio') {
+                        filename += '.webm';
+                    }
+                    downloadLink.download = filename;
+                    document.body.appendChild(downloadLink);
+                    // Add a small timeout before removing the element
+                    setTimeout(() => {
+                        document.body.removeChild(downloadLink);
+                    }, 100);
+                    downloadLink.click();
+                    showDownloadConfirmation();
+                });
+
+                mediaContainer.appendChild(downloadButton);
+                picsGallery.appendChild(mediaContainer);
+            });
+            updatePreviousMediaLabelVisibility(); // Keep previous media label updated on webcam tab
+        }
+
+        /**
+         * Populates the camera selection dropdown with available video input devices.
+         */
+        async function enumerateCameras() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                availableCameras = devices.filter(device => device.kind === 'videoinput');
+
+                cameraSelect.innerHTML = '';
+                if (availableCameras.length > 0) {
+                    availableCameras.forEach((device, index) => {
+                        const option = document.createElement('option');
+                        option.value = device.deviceId;
+                        option.textContent = device.label || `Camera ${index + 1}`;
+                        cameraSelect.appendChild(option);
+                    });
+                    cameraSelect.classList.remove('hidden');
+                    changeCameraButton.classList.remove('hidden');
+                    if (currentCameraDeviceId) {
+                        cameraSelect.value = currentCameraDeviceId;
+                    } else {
+                        currentCameraDeviceId = availableCameras[0].deviceId;
+                    }
+                } else {
+                    cameraSelect.classList.add('hidden');
+                    changeCameraButton.classList.add('hidden');
+                    showMessage('No cameras found.', 'error');
+                }
+            }
+            catch (error) {
+                console.error('Error enumerating cameras:', error);
+                showMessage('Could not enumerate cameras. Please check permissions.', 'error');
+            }
+        }
+
+        /**
+         * Starts the webcam stream with a specific deviceId and resolution constraints.
+         * @param {string} deviceId - The deviceId of the camera to start.
+         */
+        async function startWebcam(deviceId = null) {
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+
+            const videoConstraints = {};
+            const resolution = appSettings.captureResolution;
+            if (resolution !== 'default') {
+                const [width, height] = resolution.split('x').map(Number);
+                videoConstraints.width = { ideal: width };
+                videoConstraints.height = { ideal: height };
+            }
+            if (deviceId) {
+                videoConstraints.deviceId = { exact: deviceId };
+            }
+
+            const constraints = {
+                video: videoConstraints,
+                audio: true
+            };
+
+            showMessage('Attempting to start webcam...', 'info');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                currentStream = stream;
+                webcamVideo.srcObject = stream;
+                currentCameraDeviceId = deviceId || stream.getVideoTracks()[0].getSettings().deviceId;
+
+                startButton.disabled = true;
+                stopButton.disabled = false;
+                captureButton.disabled = false;
+                recordButton.disabled = false;
+                audioRecordButton.disabled = false; // Enable audio record
+                pauseResumeButton.disabled = true;
+                stopRecordButton.disabled = true;
+
+                showMessage('Webcam started successfully!', 'success');
+                enumerateCameras();
+            } catch (error) {
+                console.error('Error accessing webcam:', error);
+                if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                    showMessage('Permission to access webcam denied. Please allow camera/microphone access in your browser settings.', 'error');
+                } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+                    showMessage('No webcam or microphone found. Please ensure devices are connected and enabled.', 'error');
+                } else if (error.name === 'OverconstrainedError') {
+                    showMessage(`Resolution or constraint not supported: ${error.message}. Try 'Default' resolution.`, 'error');
+                } else {
+                    showMessage(`Could not start webcam: ${error.message}`, 'error');
+                }
+                startButton.disabled = false;
+                stopButton.disabled = true;
+                captureButton.disabled = true;
+                recordButton.disabled = true;
+                audioRecordButton.disabled = true;
+                pauseResumeButton.disabled = true;
+                stopRecordButton.disabled = true;
+            }
+        }
+
+        /**
+         * Stops the webcam stream.
+         */
+        function stopWebcam() {
+            if (currentStream) {
+                if (isRecording) {
+                    stopRecording();
+                }
+                currentStream.getTracks().forEach(track => track.stop());
+                webcamVideo.srcObject = null;
+                currentStream = null;
+
+                startButton.disabled = false;
+                stopButton.disabled = true;
+                captureButton.disabled = true;
+                recordButton.disabled = true;
+                audioRecordButton.disabled = true;
+                pauseResumeButton.disabled = true;
+                stopRecordButton.disabled = true;
+                imageEditingControlsDiv.classList.add('hidden'); // Hide editing controls on stop
+                showMessage('Webcam stopped.', 'info');
+            }
+        }
+
+        /**
+         * Initiates a countdown before executing a callback function.
+         * @param {number} seconds - The duration of the countdown.
+         * @param {function} callback - The function to call after the countdown.
+         */
+        function startCountdown(seconds, callback) {
+            let count = seconds;
+            if (count <= 0) {
+                countdownOverlay.classList.remove('show');
+                callback();
+                return;
+            }
+
+            countdownOverlay.classList.add('show');
+            countdownNumber.textContent = count;
+            countdownNumber.style.animation = 'none'; // Reset animation
+            void countdownNumber.offsetWidth; // Trigger reflow
+            countdownNumber.style.animation = 'countdownPop 1s ease-out forwards';
+
+            countdownInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    countdownNumber.textContent = count;
+                    countdownNumber.style.animation = 'none'; // Reset animation
+                    void countdownNumber.offsetWidth; // Trigger reflow
+                    countdownNumber.style.animation = 'countdownPop 1s ease-out forwards';
+                } else {
+                    clearInterval(countdownInterval);
+                    countdownOverlay.classList.remove('show');
+                    callback();
+                }
+            }, 1000);
+        }
+
+        /**
+         * Captures a photo from the current video stream and displays it in a pop-up.
+         */
+        function capturePhoto() {
+            if (webcamVideo.srcObject && currentStream) {
+                const countdownTime = parseInt(appSettings.countdownTime);
+                if (countdownTime > 0) {
+                    startCountdown(countdownTime, () => {
+                        performCapturePhoto();
+                    });
+                } else {
+                    performCapturePhoto();
+                }
+            } else {
+                showMessage('No webcam stream active to capture a photo.', 'error');
+            }
+        }
+
+        /**
+         * Performs the actual photo capture after any countdown.
+         */
+        function performCapturePhoto() {
+            webcamCanvas.width = webcamVideo.videoWidth;
+            webcamCanvas.height = webcamVideo.videoHeight;
+
+            // Apply initial filter from settings to the canvas context
+            if (appSettings.imageFilter === 'grayscale') {
+                webcamContext.filter = 'grayscale(100%)';
+            } else if (appSettings.imageFilter === 'sepia') {
+                webcamContext.filter = 'sepia(100%)';
+            } else if (appSettings.imageFilter === 'invert') {
+                webcamContext.filter = 'invert(100%)';
+            } else {
+                webcamContext.filter = 'none';
+            }
+
+            // Draw the video frame onto the canvas
+            webcamContext.drawImage(webcamVideo, 0, 0, webcamCanvas.width, webcamCanvas.height);
+
+            // Reset filter immediately after drawing to avoid affecting subsequent operations
+            webcamContext.filter = 'none';
+
+            // Store the captured image as an ImageBitmap for editing and reset
+            createImageBitmap(webcamCanvas).then(imgBitmap => {
+                originalCapturedImageBitmap = imgBitmap;
+                console.log('Image captured and stored as original ImageBitmap.');
+                // Enable editing controls
+                imageEditingControlsDiv.classList.remove('hidden');
+                enableEditingButtons();
+
+                // Generate data URL for storage and preview
+                const imageDataURL = webcamCanvas.toDataURL('image/png', parseFloat(appSettings.photoQuality));
+                const newPhoto = { id: Date.now(), type: 'image', dataURL: imageDataURL };
+                capturedMedia.unshift(newPhoto);
+                saveMediaToIndexedDB();
+
+                clearTimeout(previewLabelTimeoutId);
+                previewLabel.classList.add('show');
+                previewLabel.style.pointerEvents = 'auto';
+
+                previewLabelTimeoutId = setTimeout(() => {
+                    previewLabel.classList.remove('show');
+                    previewLabel.style.pointerEvents = 'none';
+                    showPreviewModal(newPhoto, true, 'This preview will disappear in 5 seconds.');
+                }, 1000);
+
+                showMessage('Photo captured! Previewing...', 'info');
+                updatePreviousMediaLabelVisibility();
+            }).catch(error => {
+                console.error('Error creating ImageBitmap after capture:', error);
+                showMessage('Error processing captured image for editing.', 'error');
+            });
+        }
+
+        /**
+         * Starts video or audio recording.
+         * @param {string} type - 'video' or 'audio'.
+         */
+        function startRecording(type) {
+            if (!currentStream) {
+                showMessage(`No webcam stream active to record ${type}.`, 'error');
+                return;
+            }
+
+            recordedChunks = [];
+            let mimeType;
+            let tracks;
+
+            if (type === 'video') {
+                mimeType = 'video/mp4';
+                tracks = currentStream.getVideoTracks().concat(currentStream.getAudioTracks());
+                if (!MediaRecorder.isTypeSupported(mimeType)) {
+                    mimeType = 'video/webm; codecs=vp9';
+                    if (!MediaRecorder.isTypeSupported(mimeType)) {
+                        mimeType = 'video/webm; codecs=vp8';
+                        if (!MediaRecorder.isTypeSupported(mimeType)) {
+                            mimeType = 'video/webm';
+                        }
+                    }
+                }
+            } else if (type === 'audio') {
+                mimeType = 'audio/webm'; // Common audio-only format
+                tracks = currentStream.getAudioTracks();
+                if (tracks.length === 0) {
+                    showMessage('No audio input found to record audio.', 'error');
+                    return;
+                }
+            } else {
+                showMessage('Invalid recording type specified.', 'error');
+                return;
+            }
+
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                showMessage(`Recording format ${mimeType} is not supported on your browser.`, 'error');
+                return;
+            }
+
+            const options = { mimeType: mimeType };
+            const streamToRecord = new MediaStream(tracks); // Create new stream with only relevant tracks
+
+            const countdownTime = parseInt(appSettings.countdownTime);
+            if (countdownTime > 0) {
+                startCountdown(countdownTime, () => {
+                    performStartRecording(streamToRecord, options, type);
+                });
+            } else {
+                performStartRecording(streamToRecord, options, type);
+            }
+        }
+
+        function performStartRecording(streamToRecord, options, type) {
+            try {
+                mediaRecorder = new MediaRecorder(streamToRecord, options);
+                recordingMediaType = type;
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: options.mimeType });
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        const base64Data = reader.result;
+                        const newMedia = {
+                            id: Date.now(),
+                            type: recordingMediaType,
+                            dataURL: URL.createObjectURL(blob), // Temporary Blob URL for preview
+                            base64Data: base64Data, // Original Base64 for saving
+                            mimeType: options.mimeType
+                        };
+                        capturedMedia.unshift(newMedia);
+                        saveMediaToIndexedDB();
+
+                        // Changed autoHide to false for video/audio recordings
+                        showPreviewModal(newMedia, false, `Recording stopped. Previewing ${recordingMediaType}...`);
+
+                        recordedChunks = [];
+                        recordingMediaType = null;
+                        updatePreviousMediaLabelVisibility();
+                    };
+                    reader.readAsDataURL(blob);
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                isPaused = false;
+
+                recordButton.disabled = true;
+                audioRecordButton.disabled = true;
+                captureButton.disabled = true;
+                pauseResumeButton.disabled = false;
+                pauseResumeButton.querySelector('i').className = 'fas fa-pause'; // Set pause icon
+                stopRecordButton.disabled = false;
+                imageEditingControlsDiv.classList.add('hidden'); // Hide editing controls during recording
+                showMessage(`${type.charAt(0).toUpperCase() + type.slice(1)} recording started!`, 'success');
+            } catch (error) {
+                console.error('Error starting recording:', error);
+                showMessage(`Could not start recording: ${error.message}`, 'error');
+                recordButton.disabled = false;
+                audioRecordButton.disabled = false;
+                captureButton.disabled = false;
+                pauseResumeButton.disabled = true;
+                stopRecordButton.disabled = true;
+            }
+        }
+
+
+        /**
+         * Pauses or resumes video recording.
+         */
+        function pauseResumeRecording() {
+            if (!mediaRecorder) return;
+
+            const pauseIcon = pauseResumeButton.querySelector('i');
+
+            if (isPaused) {
+                mediaRecorder.resume();
+                isPaused = false;
+                pauseIcon.className = 'fas fa-pause'; // Change to pause icon
+                showMessage('Recording resumed.', 'info');
+            } else {
+                mediaRecorder.pause();
+                isPaused = true;
+                pauseIcon.className = 'fas fa-play'; // Change to play icon
+                showMessage('Recording paused.', 'info');
+            }
+        }
+
+        /**
+         * Stops video recording.
+         */
+        function stopRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                isPaused = false;
+
+                recordButton.disabled = false;
+                audioRecordButton.disabled = false;
+                captureButton.disabled = false;
+                pauseResumeButton.disabled = true;
+                pauseResumeButton.querySelector('i').className = 'fas fa-pause'; // Reset to pause icon
+                stopRecordButton.disabled = true;
+                showMessage('Recording stopped. Processing...', 'info');
+            }
+        }
+
+        /**
+         * Switches to the selected camera device.
+         */
+        async function changeCamera() {
+            const selectedDeviceId = cameraSelect.value;
+            if (selectedDeviceId && selectedDeviceId !== currentCameraDeviceId) {
+                showMessage('Switching camera...', 'info');
+                await startWebcam(selectedDeviceId);
+            } else {
+                showMessage('Please select a different camera.', 'info');
+            }
+        }
+
+        /**
+         * Shows the webcam section and hides the pics section.
+         */
+        function showWebcamSection() {
+            webcamSection.classList.remove('hidden');
+            picsSection.classList.add('hidden');
+            navWebcamButton.disabled = true;
+            navPicsButton.disabled = false;
+            navSettingsButton.disabled = false;
+            toggleSelectionMode(false); // Ensure selection mode is off when switching tabs
+            updatePreviousMediaLabelVisibility();
+            // Hide editing controls when navigating away from webcam section
+            imageEditingControlsDiv.classList.add('hidden');
+            disableEditingButtons();
+        }
+
+        /**
+         * Shows the pics section and hides the webcam section.
+         */
+        function showPicsSection() {
+            picsSection.classList.remove('hidden');
+            webcamSection.classList.add('hidden');
+            navPicsButton.disabled = true;
+            navWebcamButton.disabled = false;
+            navSettingsButton.disabled = false;
+            toggleSelectionMode(false); // Reset selection mode on tab switch
+            renderPicsPage();
+            // Hide editing controls when navigating to pics section
+            imageEditingControlsDiv.classList.add('hidden');
+            disableEditingButtons();
+        }
+
+        /**
+         * Shows the settings modal.
+         */
+        function showSettingsModal() {
+            settingsModal.style.visibility = 'visible';
+            settingsModal.classList.add('show');
+        }
+
+        /**
+         * Hides the settings modal.
+         */
+        function hideSettingsModal() {
+            settingsModal.classList.remove('show');
+            setTimeout(() => {
+                settingsModal.style.visibility = 'hidden';
+            }, 300);
+        }
+
+        /**
+         * Shows the changelog modal.
+         */
+        function showChangelogModal() {
+            changelogModal.style.visibility = 'visible';
+            changelogModal.classList.add('show');
+            hideSettingsModal(); // Hide settings modal when changelog is shown
+        }
+
+        /**
+         * Hides the changelog modal.
+         */
+        function hideChangelogModal() {
+            changelogModal.classList.remove('show');
+            setTimeout(() => {
+                changelogModal.style.visibility = 'hidden';
+            }, 300);
+        }
+
+        /**
+         * Shows the apology popup.
+         */
+        function showApologyPopup() {
+            apologyPopup.classList.add('show');
+        }
+
+        /**
+         * Hides the apology popup.
+         */
+        function hideApologyPopup() {
+            apologyPopup.classList.remove('show');
+            localStorage.setItem(APOLOGY_POPUP_SHOWN_KEY, 'true'); // Set flag so it doesn't show again
+        }
+
+        /**
+         * Enables all image editing buttons.
+         */
+        function enableEditingButtons() {
+            grayscaleButton.disabled = false;
+            sepiaButton.disabled = false;
+            rotateButton.disabled = false;
+            flipHButton.disabled = false;
+            resetButton.disabled = false;
+        }
+
+        /**
+         * Disables all image editing buttons.
+         */
+        function disableEditingButtons() {
+            grayscaleButton.disabled = true;
+            sepiaButton.disabled = true;
+            rotateButton.disabled = true;
+            flipHButton.disabled = true;
+            resetButton.disabled = true;
+        }
+
+        /**
+         * Redraws the original captured image onto the canvas.
+         */
+        function drawOriginalCapturedImage() {
+            if (originalCapturedImageBitmap) {
+                webcamCanvas.width = originalCapturedImageBitmap.width;
+                webcamCanvas.height = originalCapturedImageBitmap.height;
+                webcamContext.clearRect(0, 0, webcamCanvas.width, webcamCanvas.height);
+                webcamContext.drawImage(originalCapturedImageBitmap, 0, 0);
+                showMessage('Image reset to original.', 'info');
+            } else {
+                showMessage('No original image to reset to. Capture a photo first.', 'error');
+            }
+        }
+
+        /**
+         * Applies a filter to the current image on the webcamCanvas.
+         * @param {string} filterType - The type of filter to apply ('grayscale', 'sepia').
+         */
+        function applyImageFilter(filterType) {
+            if (!originalCapturedImageBitmap) {
+                showMessage('Capture a photo first to apply filters.', 'error');
+                return;
+            }
+
+            // Get the current image data from the canvas
+            const imageData = webcamContext.getImageData(0, 0, webcamCanvas.width, webcamCanvas.height);
+            const pixels = imageData.data;
+
+            for (let i = 0; i < pixels.length; i += 4) {
+                const r = pixels[i];
+                const g = pixels[i + 1];
+                const b = pixels[i + 2];
+
+                if (filterType === 'grayscale') {
+                    const avg = (r + g + b) / 3;
+                    pixels[i] = avg;
+                    pixels[i + 1] = avg;
+                    pixels[i + 2] = avg;
+                } else if (filterType === 'sepia') {
+                    pixels[i] = Math.min(255, (r * 0.393) + (g * 0.769) + (b * 0.189));
+                    pixels[i + 1] = Math.min(255, (r * 0.349) + (g * 0.686) + (b * 0.168));
+                    pixels[i + 2] = Math.min(255, (r * 0.272) + (g * 0.534) + (b * 0.131));
+                }
+            }
+            webcamContext.putImageData(imageData, 0, 0);
+            showMessage(`${filterType.charAt(0).toUpperCase() + filterType.slice(1)} filter applied!`, 'success');
+        }
+
+        /**
+         * Rotates the image on the webcamCanvas 90 degrees clockwise.
+         */
+        async function rotateImage() {
+            if (!originalCapturedImageBitmap) {
+                showMessage('Capture a photo first to rotate.', 'error');
+                return;
+            }
+
+            const currentImageBitmap = await createImageBitmap(webcamCanvas);
+
+            const newWidth = currentImageBitmap.height;
+            const newHeight = currentImageBitmap.width;
+
+            webcamCanvas.width = newWidth;
+            webcamCanvas.height = newHeight;
+
+            webcamContext.clearRect(0, 0, newWidth, newHeight);
+            webcamContext.save();
+            webcamContext.translate(newWidth / 2, newHeight / 2);
+            webcamContext.rotate(Math.PI / 2); // 90 degrees clockwise
+            webcamContext.drawImage(currentImageBitmap, -currentImageBitmap.width / 2, -currentImageBitmap.height / 2);
+            webcamContext.restore();
+            showMessage('Image rotated 90 degrees clockwise!', 'success');
+        }
+
+        /**
+         * Flips the image on the webcamCanvas horizontally.
+         */
+        async function flipImageHorizontal() {
+            if (!originalCapturedImageBitmap) {
+                showMessage('Capture a photo first to flip.', 'error');
+                return;
+            }
+
+            const currentImageBitmap = await createImageBitmap(webcamCanvas);
+
+            webcamCanvas.width = currentImageBitmap.width;
+            webcamCanvas.height = currentImageBitmap.height;
+
+            webcamContext.clearRect(0, 0, webcamCanvas.width, webcamCanvas.height);
+            webcamContext.save();
+            webcamContext.translate(webcamCanvas.width, 0); // Move origin to right edge
+            webcamContext.scale(-1, 1); // Flip horizontally
+            webcamContext.drawImage(currentImageBitmap, 0, 0);
+            webcamContext.restore();
+            showMessage('Image flipped horizontally!', 'success');
+        }
+
+
+        // Event Listeners
+        startButton.addEventListener('click', () => {
+            console.log("Start Webcam button clicked!"); // Diagnostic log
+            startWebcam();
+        });
+        stopButton.addEventListener('click', stopWebcam);
+        captureButton.addEventListener('click', capturePhoto);
+        recordButton.addEventListener('click', () => startRecording('video'));
+        audioRecordButton.addEventListener('click', () => startRecording('audio')); // New listener
+        pauseResumeButton.addEventListener('click', pauseResumeRecording);
+        stopRecordButton.addEventListener('click', stopRecording);
+        modalCloseButton.addEventListener('click', hidePreviewModal);
+        modalFullscreenButton.addEventListener('click', toggleModalFullscreen); // New listener
+        modalDownloadButton.addEventListener('click', downloadModalMedia); // New listener
+        modalShareButton.addEventListener('click', shareModalMedia); // New listener
+        changeCameraButton.addEventListener('click', changeCamera);
+        cameraSelect.addEventListener('change', changeCamera);
+
+        // Navigation button event listeners
+        navWebcamButton.addEventListener('click', () => {
+            console.log("Webcam button clicked!"); // Diagnostic log
+            showWebcamSection();
+        });
+        navPicsButton.addEventListener('click', () => {
+            console.log("My Media button clicked!"); // Diagnostic log
+            showPicsSection();
+        });
+        navSettingsButton.addEventListener('click', () => {
+            console.log("Settings button clicked!"); // Diagnostic log
+            showSettingsModal();
+        });
+
+        // Confirmation dialog button event listeners
+        confirmDialogConfirmBtn.addEventListener('click', () => {
+            if (currentConfirmAction && currentConfirmAction.onConfirm) {
+                currentConfirmAction.onConfirm();
+            }
+            hideConfirmationDialog(); // Always hide after action
+        });
+        confirmDialogCancelBtn.addEventListener('click', () => {
+            if (currentConfirmAction && currentConfirmAction.onCancel) {
+                currentConfirmAction.onCancel();
+            }
+            hideConfirmationDialog(); // Always hide after action
+        });
+
+        // Clear All Media button in the gallery
+        clearAllMediaButton.addEventListener('click', clearAllMedia);
+
+        // Settings Event Listeners
+        settingsModalCloseButton.addEventListener('click', hideSettingsModal);
+        accentThemeRadios.forEach(radio => {
+            radio.addEventListener('change', (event) => {
+                applyTheme(event.target.value);
+            });
+        });
+        colorModeRadios.forEach(radio => {
+            radio.addEventListener('change', (event) => {
+                toggleDarkMode(event.target.value === 'dark');
+            });
+        });
+        countdownTimerInput.addEventListener('change', (event) => {
+            let value = parseInt(event.target.value);
+            if (isNaN(value) || value < 0) value = 0;
+            if (value > 10) value = 10;
+            event.target.value = value;
+            appSettings.countdownTime = value;
+            saveSettings();
+        });
+        photoQualityInput.addEventListener('change', (event) => {
+            let value = parseFloat(event.target.value);
+            if (isNaN(value) || value < 0.1) value = 0.1;
+            if (value > 1.0) value = 1.0;
+            event.target.value = value;
+            appSettings.photoQuality = value;
+            saveSettings();
+        });
+        captureResolutionSelect.addEventListener('change', (event) => {
+            appSettings.captureResolution = event.target.value;
+            saveSettings();
+            if (currentStream) {
+                showMessage('Resolution change applied. Restart webcam to see effect.', 'info');
+            }
+        });
+        imageFilterSelect.addEventListener('change', (event) => {
+            appSettings.imageFilter = event.target.value;
+            saveSettings();
+            showMessage(`Image filter set to: ${event.target.value}`, 'info');
+        });
+
+        // Changelog Event Listeners
+        showChangelogButton.addEventListener('click', showChangelogModal);
+        changelogModalCloseButton.addEventListener('click', hideChangelogModal);
+
+        // Gallery Batch Action & Sorting Event Listeners
+        toggleSelectButton.addEventListener('click', () => toggleSelectionMode(true));
+        cancelSelectButton.addEventListener('click', () => toggleSelectionMode(false));
+        batchDeleteButton.addEventListener('click', () => {
+            if (selectedMedia.size > 0) {
+                deleteMedia(Array.from(selectedMedia));
+            } else {
+                showMessage('No items selected for deletion.', 'info');
+            }
+        });
+        batchDownloadButton.addEventListener('click', async () => {
+            if (selectedMedia.size === 0) {
+                showMessage('No items selected for download.', 'info');
+                return;
+            }
+
+            const selectedItems = capturedMedia.filter(item => selectedMedia.has(item.id));
+            if (selectedItems.length === 1) {
+                const item = selectedItems[0];
+                const downloadLink = document.createElement('a');
+                downloadLink.href = (item.type === 'video' || item.type === 'audio') ? item.base64Data : item.dataURL;
+                const timestamp = new Date(item.id).toISOString().replace(/[:.-]/g, '');
+                let filename = `webcam_media_${timestamp}`;
+                if (item.type === 'image') { filename += '.png'; }
+                else if (item.type === 'video') { filename += '.mp4'; }
+                else if (item.type === 'audio') { filename += '.webm'; }
+                downloadLink.download = filename;
+                document.body.appendChild(downloadLink);
+                // Add a small timeout before removing the element
+                setTimeout(() => {
+                    document.body.removeChild(downloadLink);
+                }, 100);
+                downloadLink.click();
+                showDownloadConfirmation();
+            } else if (selectedItems.length > 1) {
+                showMessage('Preparing files for batch download...', 'info');
+                try {
+                    for (const item of selectedItems) {
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = (item.type === 'video' || item.type === 'audio') ? item.base64Data : item.dataURL;
+                        const timestamp = new Date(item.id).toISOString().replace(/[:.-]/g, '');
+                        let filename = `webcam_media_${timestamp}`;
+                        if (item.type === 'image') { filename += '.png'; }
+                        else if (item.type === 'video') { filename += '.mp4'; }
+                        else if (item.type === 'audio') { filename += '.webm'; }
+                        downloadLink.download = filename;
+                        document.body.appendChild(downloadLink);
+                        // Add a small timeout before removing the element
+                        setTimeout(() => {
+                            document.body.removeChild(downloadLink);
+                        }, 100);
+                        downloadLink.click();
+                        // Brief pause between downloads to avoid browser blocking
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                    }
+                    showMessage('All selected files have been triggered for download.', 'success');
+                } catch (error) {
+                    console.error('Batch download failed:', error);
+                    showMessage('Failed to perform batch download.', 'error');
+                }
+            }
+            toggleSelectionMode(false); // Exit selection mode after download attempt
+        });
+        sortGallerySelect.addEventListener('change', renderPicsPage); // Re-render gallery on sort change
+
+        // Image Editing Event Listeners
+        grayscaleButton.addEventListener('click', () => applyImageFilter('grayscale'));
+        sepiaButton.addEventListener('click', () => applyImageFilter('sepia'));
+        rotateButton.addEventListener('click', rotateImage);
+        flipHButton.addEventListener('click', flipImageHorizontal);
+        resetButton.addEventListener('click', drawOriginalCapturedImage);
+
+        // Apology Popup Event Listener
+        apologyPopupCloseButton.addEventListener('click', hideApologyPopup);
+
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log("DOM Content Loaded in main app!"); // Diagnostic log
+            loadSettings(); // Load all settings
+            // Diagnostic: Check initial overlay states
+            console.log('Initial overlay states:');
+            console.log('previewModal.classList:', previewModal.classList.value, 'visibility:', previewModal.style.visibility, 'pointer-events:', getComputedStyle(previewModal).pointerEvents);
+            console.log('confirmationDialog.classList:', confirmationDialog.classList.value, 'visibility:', confirmationDialog.style.visibility, 'pointer-events:', getComputedStyle(confirmationDialog).pointerEvents);
+            console.log('settingsModal.classList:', settingsModal.classList.value, 'visibility:', settingsModal.style.visibility, 'pointer-events:', getComputedStyle(settingsModal).pointerEvents);
+            console.log('changelogModal.classList:', changelogModal.classList.value, 'visibility:', changelogModal.style.visibility, 'pointer-events:', getComputedStyle(changelogModal).pointerEvents);
+            console.log('downloadConfirmation.classList:', downloadConfirmation.classList.value, 'visibility:', downloadConfirmation.style.visibility, 'pointer-events:', getComputedStyle(downloadConfirmation).pointerEvents);
+
+
+            // Changelog Data
+            const changelogData = `
+                <h3>Version 2.3.0 (May 30, 2025) - PWA & PC Install</h3>
+                <ul>
+                    <li><strong>Progressive Web App (PWA) Enhancements:</strong>
+                        <ul>
+                            <li>🌐 **Seamless Installation:** Easily install the app directly from your browser to your device for quick access.</li>
+                            <li>💻 **PC Install App:** Enjoy a native-like application experience on your desktop, separate from the browser.</li>
+                            <li>⚡ **Offline Capabilities:** The app is now more robust and can function even when you're offline.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <h3>Version 2.2.0 (May 30, 2025) - Image Editing!</h3>
+                <ul>
+                    <li><strong>Advanced Image Editing:</strong>
+                        <ul>
+                            <li>🎨 **Grayscale & Sepia Filters:** Apply these classic filters to your captured photos.</li>
+                            <li>🔄 **Rotate Image:** Rotate your photos 90 degrees clockwise.</li>
+                            <li>↔️ **Flip Horizontal:** Mirror your photos horizontally.</li>
+                            <li>🔙 **Reset Image:** Revert to the original captured image state.</li>
+                            <li>New "Image Editing Tools" section appears after photo capture.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <h3>Version 2.1.0 (May 30, 2025) - Feature Packed!</h3>
+                <ul>
+                    <li><strong>New Webcam Controls:</strong>
+                        <ul>
+                            <li>📸 **Countdown Timer:** Set a timer (0-10s) before photo capture or recording begins.</li>
+                            <li>🖼️ **Basic Image Filters:** Apply 'Grayscale', 'Sepia', or 'Invert' filters to photos before capture (configured in Settings).</li>
+                            <li>📏 **Photo Resolution & Quality:** Choose capture resolution (Default, HD, Full HD) and JPEG quality (0.1-1.0) in Settings.</li>
+                            <li>🎤 **Audio-Only Recording:** Dedicated button to record only audio from your microphone.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Enhanced Media Gallery:</strong>
+                        <ul>
+                            <li>✔️ **Batch Selection & Operations:** Select multiple items to 'Download Selected' or 'Delete Selected'.</li>
+                            <li>🔄 **Gallery Sorting:** Sort media by 'Newest First', 'Oldest First', or 'Type'.</li>
+                            <li>🔄 **Individual Item Share & Download:** Buttons directly on the media modal for easier sharing (Web Share API) and download.</li>
+                            <li>Expand/Collapse Button for media modal: Toggle fullscreen for images and videos in the preview modal.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <h3>Version 2.0.3 (May 30, 2025)</h3>
+                <ul>
+                    <li><strong>UI Fixes & Improvements:</strong>
+                        <ul>
+                            <li>Resolved issue where buttons were not clickable due to an invisible overlay interfering with pointer events.</li>
+                            <li>Fixed changelog text not rendering bold formatting properly.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <h3>Version 2.0.2 (May 29, 2025)</h3>
+                <ul>
+                    <li><strong>Added Changelog:</strong> Implemented a new 'Show Changelog' button within the theme settings, displaying application updates.</li>
+                </ul>
+                <h3>Version 2.0.1 (May 29, 2025)</h3>
+                <ul>
+                    <li><strong>Fixed Settings Icon:</strong> Resolved issue where the theme settings button appeared as an oval; now correctly renders as a perfect circle.</li>
+                </ul>
+                <h3>Version 2.0.0 (UI Revamp - April 15, 2024)</h3>
+                <ul>
+                    <li><strong>Major UI Overhaul:</strong> Introduced a completely redesigned user interface for a modern and intuitive experience.</li>
+                    <li><strong>Extensive Theming Options:</strong> Added comprehensive theme customization options, including light/dark modes and various color palettes.</li>
+                    <li><strong>Improved Accessibility:</strong> Enhanced keyboard navigation and screen reader compatibility.
+                    <li><strong>Responsive Design:</strong> Optimized layout for seamless viewing across different devices and screen sizes.</li>
+                    <li><strong>Performance Improvements:</strong> Refactored codebase for faster loading and smoother interactions.</li>
+                </ul>
+            `;
+            if (changelogContent) {
+                changelogContent.innerHTML = changelogData.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            }
+
+            try {
+                await openDatabase();
+                const loadedMedia = await loadMediaFromIndexedDB();
+                capturedMedia.splice(0, capturedMedia.length, ...loadedMedia);
+
+                // Ensure buttons are in their correct initial state
+                stopButton.disabled = true;
+                captureButton.disabled = true;
+                recordButton.disabled = true;
+                audioRecordButton.disabled = true;
+                pauseResumeButton.disabled = true;
+                stopRecordButton.disabled = true;
+                startButton.disabled = false;
+
+                showWebcamSection();
+                showMessage('Click "Start Webcam" to begin.', 'info');
+                enumerateCameras();
+
+                renderPicsPage(); // Initial render of gallery
+                updatePreviousMediaLabelVisibility(); // Update label on webcam tab
+                initializeAudio(); // Initialize Tone.js and attach click listeners
+
+                // Show apology popup if not shown before
+                if (!localStorage.getItem(APOLOGY_POPUP_SHOWN_KEY)) {
+                    showApologyPopup();
+                }
+
+            } catch (error) {
+                console.error('Failed to initialize app with IndexedDB:', error);
+                showMessage('Failed to load app. Please check browser console for details.', 'error');
+            }
+            console.log("All event listeners attached."); // Diagnostic log
+        });
+
+        // PWA Service Worker Registration Script
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                try {
+                    const serviceWorkerUrl = '/service-worker.js';
+                    navigator.serviceWorker.register(serviceWorkerUrl)
+                        .then(registration => {
+                            console.log('Service Worker registered with scope:', registration.scope);
+                        })
+                        .catch(error => {
+                            console.error('Service Worker registration failed:', error);
+                        });
+                } catch (e) {
+                    console.error('Error during Service Worker registration attempt:', e);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
